@@ -4,7 +4,7 @@
 
 /* Ajoutez vos styles personnalisés ci-dessous */
 body {
-    background-color: #181818; /* Fond sombre */
+    background: linear-gradient(to bottom, #000000, #464343);
     color: #ffffff; /* Texte blanc */
 }
 
@@ -77,4 +77,12 @@ button:hover {
 
 .icon:hover {
     fill: #E63946;
+}
+
+.review-card {
+    background: linear-gradient(to right, #464343, #000000);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin: 1rem;
+    text-align: center;
 }

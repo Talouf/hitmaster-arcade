@@ -14,19 +14,23 @@
             <img src="{{ asset('images/hitmaster.png') }}" alt="HitMaster Arcade Logo">
             <nav>
                 <ul class="flex space-x-4">
-                    <li><a href="#">Accueil</a></li>
-                    <li><a href="#">À propos</a></li>
-                    <li><a href="#">Produits</a></li>
-                    <li><a href="#">Contact</a></li>
+                    <li><a href="/">Accueil</a></li>
+                    <li><a href="/about">À propos</a></li>
+                    <li><a href="/products">Produits</a></li>
+                    <li><a href="/contact">Contact</a></li>
                 </ul>
             </nav>
-
             <div class="flex space-x-4">
-                <img src="{{ asset('images/search-icon.png') }}" alt="Search" class="icon">
-                <img src="{{ asset('images/profile-icon.png') }}" alt="Profile" class="icon">
-                <img src="{{ asset('images/cart-icon.png') }}" alt="Cart" class="icon">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4v8l6-4-6-4z" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4v8l6-4-6-4z" />
+                </svg>
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 4v8l6-4-6-4z" />
+                </svg>
             </div>
-
         </header>
         <main>
             <section class="text-center mb-8">
@@ -42,6 +46,7 @@
                         <img src="{{ asset('images/white_controller.webp') }}" alt="HitMaster β" class="mb-2">
                         <p>HitMaster β - 120€</p>
                     </div>
+
                 </div>
             </section>
             <section class="text-center mb-8">
@@ -58,15 +63,15 @@
             <section class="text-center mb-8">
                 <h2 class="text-3xl font-bold">Avis de nos clients</h2>
                 <div class="flex justify-center mt-4 space-x-4">
-                    <div class="card">
+                    <div class="review-card">
                         <p>“Je suis devenu trop fort depuis que j'ai une HitMaster α”</p>
                         <p>- Jean-Didier, joueur occasionnel</p>
                     </div>
-                    <div class="card">
+                    <div class="review-card">
                         <p>“Mes combos sortent tout seuls!”</p>
                         <p>- Anne-Marie, débutante</p>
                     </div>
-                    <div class="card">
+                    <div class="review-card">
                         <p>“J'ai pas perdu un seul tournoi depuis que j'ai la HitMaster β”</p>
                         <p>- ShredG0dX, joueur professionnel</p>
                     </div>
