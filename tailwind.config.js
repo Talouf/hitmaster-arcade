@@ -5,7 +5,13 @@ module.exports = {
     './resources/**/*.vue',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: '#E63946', // Couleur principale (rouge)
+        secondary: '#464343', // Couleur secondaire (gris foncé)
+        neutral: '#A5A5A5', // Couleur neutre (gris)
+      },
+    },
   },
   plugins: [],
-}
+};
