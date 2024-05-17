@@ -9,14 +9,12 @@ class CreateNewsTable extends Migration
     public function up()
     {
         Schema::create('news', function (Blueprint $table) {
-            $table->id('news_id');
-            $table->unsignedBigInteger('admin_id');
-            $table->string('title', 100);
+            $table->id();
+            $table->foreignId('admin_id')->constrained('admins')->onDelete('cascade');
+            $table->string('title');
             $table->text('content');
-            $table->date('post_date');
+            $table->timestamp('post_date');
             $table->timestamps();
-
-            $table->foreign('admin_id')->references('admin_id')->on('admin');
         });
     }
 
@@ -25,3 +23,5 @@ class CreateNewsTable extends Migration
         Schema::dropIfExists('news');
     }
 }
+
+

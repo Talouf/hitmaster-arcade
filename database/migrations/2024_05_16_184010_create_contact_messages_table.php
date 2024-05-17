@@ -6,21 +6,29 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateContactMessagesTable extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up()
     {
         Schema::create('contact_messages', function (Blueprint $table) {
-            $table->id('message_id');
-            $table->unsignedBigInteger('user_id');
-            $table->string('name', 100);
-            $table->string('email', 100);
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->string('name');
+            $table->string('email');
             $table->text('message');
             $table->date('sent_date');
             $table->timestamps();
-
-            $table->foreign('user_id')->references('user_id')->on('users');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down()
     {
         Schema::dropIfExists('contact_messages');

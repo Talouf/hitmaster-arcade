@@ -9,13 +9,11 @@ class CreateOrdersTable extends Migration
     public function up()
     {
         Schema::create('orders', function (Blueprint $table) {
-            $table->id('order_id'); 
-            $table->unsignedBigInteger('user_id'); 
+            $table->id();
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->date('order_date');
-            $table->float('total_price');
+            $table->float('total_price', 8, 2);
             $table->timestamps();
-
-            $table->foreign('user_id')->references('user_id')->on('users')->onDelete('cascade'); 
         });
     }
 
@@ -24,3 +22,8 @@ class CreateOrdersTable extends Migration
         Schema::dropIfExists('orders');
     }
 }
+
+
+
+
+

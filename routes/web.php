@@ -1,6 +1,12 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\NewsController;
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ContactController;
+use App\Http\Controllers\AboutController;
+use App\Http\Controllers\SearchController;
 
 // Autres routes existantes...
 
@@ -19,56 +25,16 @@ Route::get('/products', function () {
 Route::get('/contact', function () {
     return view('contact');
 });
+#News Route
 
-Route::get('/product/{id}', function ($id) {
-    $products = [
-        1 => [
-            'name' => 'HitMaster Alpha',
-            'description' => 'Contrôleur de jeu précis et durable.',
-            'details' => 'Conçu pour offrir une précision et une durabilité exceptionnelles.',
-            'price' => 100,
-            'image' => 'images/white_controller.webp'
-        ],
-        2 => [
-            'name' => 'HitMaster Beta',
-            'description' => 'Design ergonomique pour un confort maximal.',
-            'details' => 'Le design ergonomique assure un confort maximal pendant les longues sessions de jeu.',
-            'price' => 120,
-            'image' => 'images/white_controller.webp'
-        ],
-        3 => [
-            'name' => 'HitMaster Gamma',
-            'description' => 'Haute performance et réactivité.',
-            'details' => 'Haute performance et réactivité pour les joueurs professionnels.',
-            'price' => 150,
-            'image' => 'images/white_controller.webp'
-        ],
-        4 => [
-            'name' => 'HitMaster Delta',
-            'description' => 'Conçu pour les joueurs professionnels.',
-            'details' => 'Conçu pour offrir une performance optimale aux joueurs professionnels.',
-            'price' => 200,
-            'image' => 'images/white_controller.webp'
-        ],
-        5 => [
-            'name' => 'HitMaster Epsilon',
-            'description' => 'Durabilité et confort exceptionnel.',
-            'details' => 'Fabriqué avec des matériaux de haute qualité pour une durabilité et un confort exceptionnels.',
-            'price' => 180,
-            'image' => 'images/white_controller.webp'
-        ],
-        6 => [
-            'name' => 'HitMaster Zeta',
-            'description' => 'Idéal pour les tournois et les compétitions.',
-            'details' => 'Idéal pour les tournois et les compétitions grâce à sa haute performance.',
-            'price' => 220,
-            'image' => 'images/white_controller.webp'
-        ],
-    ];
+Route::get('/news', [NewsController::class, 'index'])->name('news.index');
+Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
 
-    if (!array_key_exists($id, $products)) {
-        abort(404);
-    }
+Route::get('/', [HomeController::class, 'index'])->name('home');
+Route::get('/products', [ProductController::class, 'index'])->name('products.index');
+Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
+Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
+Route::get('/contact', [ContactController::class, 'index'])->name('contact');
+Route::get('/about', [AboutController::class, 'index'])->name('about');
 
-    return view('product', ['product' => $products[$id]]);
-});
+Route::get('/search', [SearchController::class, 'search'])->name('search');

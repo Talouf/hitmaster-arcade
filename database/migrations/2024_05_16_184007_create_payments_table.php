@@ -6,20 +6,28 @@ use Illuminate\Support\Facades\Schema;
 
 class CreatePaymentsTable extends Migration
 {
+    /**
+     * Run the migrations.
+     *
+     * @return void
+     */
     public function up()
     {
         Schema::create('payments', function (Blueprint $table) {
-            $table->id('payment_id');
-            $table->unsignedBigInteger('order_id');
+            $table->id();
+            $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
             $table->float('amount');
             $table->date('payment_date');
-            $table->string('payment_method', 50);
+            $table->string('payment_method');
             $table->timestamps();
-
-            $table->foreign('order_id')->references('order_id')->on('orders');
         });
     }
 
+    /**
+     * Reverse the migrations.
+     *
+     * @return void
+     */
     public function down()
     {
         Schema::dropIfExists('payments');

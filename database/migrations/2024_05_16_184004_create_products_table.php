@@ -9,15 +9,14 @@ class CreateProductsTable extends Migration
     public function up()
     {
         Schema::create('products', function (Blueprint $table) {
-            $table->id('product_id');
-            $table->string('name', 100);
-            $table->unsignedBigInteger('category_id')->nullable();
-            $table->float('price');
-            $table->text('description')->nullable();
-            $table->integer('stock_quantity');
+            $table->id();
+            $table->string('name');
+            $table->text('description');
+            $table->text('details')->nullable();
+            $table->decimal('price', 8, 2);
+            $table->string('image')->nullable();
+            $table->integer('stock_quantity')->default(0);
             $table->timestamps();
-
-            $table->foreign('category_id')->references('category_id')->on('categories');
         });
     }
 
@@ -26,3 +25,7 @@ class CreateProductsTable extends Migration
         Schema::dropIfExists('products');
     }
 }
+
+
+
+
