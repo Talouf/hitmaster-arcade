@@ -21,7 +21,6 @@
             </div>
         @endforeach
     </div>
-    {{ $products->links() }}
 </div>
 
 <script>

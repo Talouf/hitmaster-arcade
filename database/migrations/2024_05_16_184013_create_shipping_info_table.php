@@ -10,8 +10,9 @@ class CreateShippingInfoTable extends Migration
     {
         Schema::create('shipping_info', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('order_id')->constrained('orders')->onDelete('cascade');
+            $table->string('email');
             $table->string('address');
             $table->string('city');
             $table->string('state');

@@ -12,6 +12,7 @@
         <button onclick="addToCart('{{ $product->id }}')" class="btn btn-secondary">Add to Cart</button>
     </div>
 </div>
+
 <script>
 function addToCart(productId) {
     fetch(`/cart/add/${productId}`, {

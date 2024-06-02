@@ -1,5 +1,7 @@
 <?php
 
+// routes/web.php
+
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NewsController;
@@ -13,6 +15,7 @@ use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
+use App\Http\Controllers\WebhookController;
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -64,7 +67,9 @@ Route::middleware(['auth'])->group(function () {
 Route::post('/cart/add/{productId}', [CartController::class, 'addToCart'])->name('cart.add');
 Route::get('/cart', [CartController::class, 'showCart'])->name('cart.show');
 Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('cart.checkout');
-Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
+Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook']);
+
 
 require __DIR__ . '/auth.php';

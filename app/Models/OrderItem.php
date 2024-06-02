@@ -10,7 +10,12 @@ class OrderItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'order_id', 'user_id', 'product_id', 'quantity', 'price', 'is_ordered'
+        'order_id',
+        'user_id',
+        'product_id',
+        'quantity',
+        'price',
+        'is_ordered'
     ];
 
     public function user()
@@ -28,4 +33,5 @@ class OrderItem extends Model
         return $this->belongsTo(Order::class);
     }
 }
+
 

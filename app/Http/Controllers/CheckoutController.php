@@ -4,40 +4,83 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\OrderItem;
+use App\Models\Order;
+use App\Models\ShippingInfo;
 use Stripe\Stripe;
-use Stripe\PaymentIntent;
+use Stripe\Checkout\Session as StripeSession;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Auth;
 
 class CheckoutController extends Controller
 {
     public function checkout(Request $request)
     {
-        $cartItems = OrderItem::where('user_id', Auth::id())->where('is_ordered', false)->get();
-        $totalAmount = $cartItems->sum('price');
+        $cartItems = OrderItem::where('user_id', session('cart_id'))->where('is_ordered', false)->get();
+        $totalAmount = $cartItems->sum(function ($item) {
+            return $item->quantity * $item->price;
+        });
 
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        $paymentIntent = PaymentIntent::create([
-            'amount' => $totalAmount * 100,
-            'currency' => 'usd',
+        $lineItems = $cartItems->map(function ($item) {
+            return [
+                'price_data' => [
+                    'currency' => 'usd',
+                    'product_data' => [
+                        'name' => $item->product->name,
+                    ],
+                    'unit_amount' => $item->price * 100,
+                ],
+                'quantity' => $item->quantity,
+            ];
+        })->toArray();
+
+        $session = StripeSession::create([
             'payment_method_types' => ['card'],
+            'line_items' => $lineItems,
+            'mode' => 'payment',
+            'success_url' => route('checkout.success', ['session_id' => '{CHECKOUT_SESSION_ID}']),
+            'cancel_url' => route('checkout.cancel'),
         ]);
 
-        return view('checkout.index', [
-            'clientSecret' => $paymentIntent->client_secret,
-            'totalAmount' => $totalAmount,
-        ]);
+        return redirect($session->url);
     }
 
-    public function success()
+    public function success(Request $request)
     {
-        // Logic for successful payment
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $session = StripeSession::retrieve($request->session_id);
+        $customer_email = $session->customer_details->email;
+
+        $cartId = session('cart_id');
+        $order = Order::create([
+            'user_id' => Auth::check() ? Auth::id() : null,
+            'email' => $customer_email,
+            'order_date' => now(),
+            'total_price' => $session->amount_total / 100,
+        ]);
+
+        foreach (OrderItem::where('user_id', $cartId)->where('is_ordered', false)->get() as $item) {
+            $item->update(['is_ordered' => true, 'order_id' => $order->id]);
+        }
+
+        ShippingInfo::create([
+            'user_id' => Auth::check() ? Auth::id() : null,
+            'order_id' => $order->id,
+            'email' => $customer_email,
+            'address' => $session->shipping->address->line1,
+            'city' => $session->shipping->address->city,
+            'state' => $session->shipping->address->state,
+            'zip_code' => $session->shipping->address->postal_code,
+            'country' => $session->shipping->address->country,
+        ]);
+
         return view('checkout.success');
     }
 
     public function cancel()
     {
-        // Logic for canceled payment
         return view('checkout.cancel');
     }
 }

@@ -7,26 +7,20 @@ use Illuminate\Support\Facades\Schema;
 class CreateOrderItemsTable extends Migration
 {
     public function up()
-    {
-        Schema::create('order_items', function (Blueprint $table) {
-            $table->id();
-            $table->foreignId('order_id')->nullable()->constrained('orders')->onDelete('cascade');
-            $table->foreignId('product_id')->constrained('products')->onDelete('cascade');
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->integer('quantity');
-            $table->decimal('price', 8, 2);
-            $table->boolean('is_ordered')->default(false);
-            $table->timestamps();
-        });
-    }
-
-    public function down()
-    {
-        Schema::dropIfExists('order_items');
-    }
+{
+    Schema::create('order_items', function (Blueprint $table) {
+    $table->id();
+    $table->string('user_id'); // Changed to string to accommodate session IDs
+    $table->foreignId('product_id')->constrained()->onDelete('cascade');
+    $table->boolean('is_ordered')->default(false);
+    $table->integer('quantity')->default(1);
+    $table->decimal('price', 10, 2);
+    $table->timestamps();
+});
 }
 
-
-
-
-
+public function down()
+{
+    Schema::dropIfExists('order_items');
+}
+}
