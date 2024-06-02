@@ -6,11 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 class CreateContactMessagesTable extends Migration
 {
-    /**
-     * Run the migrations.
-     *
-     * @return void
-     */
     public function up()
     {
         Schema::create('contact_messages', function (Blueprint $table) {
@@ -24,11 +19,6 @@ class CreateContactMessagesTable extends Migration
         });
     }
 
-    /**
-     * Reverse the migrations.
-     *
-     * @return void
-     */
     public function down()
     {
         Schema::dropIfExists('contact_messages');

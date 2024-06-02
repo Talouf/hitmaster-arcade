@@ -12,7 +12,7 @@ class CreateOrdersTable extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->date('order_date');
-            $table->float('total_price', 8, 2);
+            $table->decimal('total_price', 10, 2);
             $table->timestamps();
         });
     }

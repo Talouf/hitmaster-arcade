@@ -12,12 +12,9 @@ class AdminSeeder extends Seeder
     public function run()
     {
         DB::table('admins')->insert([
-            'id' => 1,
             'name' => 'Admin',
             'email' => 'admin@example.com',
-            'password' => Hash::make('password'),
-            'created_at' => Carbon::now(),
-            'updated_at' => Carbon::now(),
+            'password' => bcrypt('password'),
         ]);
     }
 }

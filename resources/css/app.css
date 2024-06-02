@@ -1,19 +1,15 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-/* Ajoutez vos styles personnalisés ci-dessous */
 body {
     background: linear-gradient(to bottom, #000000, #464343);
-    color: #ffffff; /* Texte blanc */
+    color: #ffffff;
 }
-
-header {
-    margin-bottom: 2rem;
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 15px;
 }
 
 header img {
-    width: 100px; /* Taille du logo réduite */
+    width: 150px;
 }
 
 nav ul {
@@ -36,7 +32,13 @@ nav ul li a:hover {
     color: #E63946;
 }
 
-button {
+.search-form input {
+    padding: 0.5rem;
+    border-radius: 0.25rem;
+    border: 1px solid #ccc;
+}
+
+.search-form button {
     background-color: #E63946;
     color: #ffffff;
     border: none;
@@ -45,16 +47,16 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.search-form button:hover {
     background-color: #c5303b;
 }
 
 .card {
-    background-color: #282828; /* Fond des cartes */
+    background-color: #282828;
     border-radius: 0.5rem;
     padding: 1rem;
     margin: 1rem 0;
-    width: 300px; /* Taille des contrôleurs réduite */
+    width: 300px;
 }
 
 .card img {
