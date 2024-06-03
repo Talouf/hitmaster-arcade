@@ -16,10 +16,12 @@ use App\Http\Controllers\PaymentController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WebhookController;
+use App\Http\Controllers\ReviewController;
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
+Route::resource('products', ProductController::class);
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
@@ -70,6 +72,14 @@ Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('cart.ch
 Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
 Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook']);
+Route::get('/checkout/failed', function () {
+    return view('checkout.failed');
+})->name('checkout.failed');
+
+
+
+Route::post('/reviews/store', [ReviewController::class, 'store'])->name('reviews.store');
+
 
 
 require __DIR__ . '/auth.php';

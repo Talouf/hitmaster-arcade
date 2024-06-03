@@ -1,5 +1,7 @@
 <?php
 
+// app/Models/Product.php
+
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -10,6 +12,13 @@ class Product extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name', 'description', 'details', 'price', 'image', 'stock_quantity'
+        'name', 'description', 'price', 'image',
     ];
+
+    public function reviews()
+    {
+        return $this->hasMany(Review::class);
+    }
 }
+
+

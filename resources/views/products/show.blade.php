@@ -1,40 +1,48 @@
 @extends('layouts.app')
 
-@section('title', $product->name)
-
 @section('content')
-<div class="container mx-auto px-4">
-    <div class="product-details">
-        <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="mb-4 rounded-lg">
-        <h1 class="text-4xl font-bold">{{ $product->name }}</h1>
-        <p class="text-gray-400 mt-4">{{ $product->description }}</p>
-        <p class="text-primary mt-4">${{ $product->price }}</p>
-        <button onclick="addToCart('{{ $product->id }}')" class="btn btn-secondary">Add to Cart</button>
-    </div>
-</div>
+    <div class="container mx-auto py-16">
+        <div class="bg-gray-800 p-8 rounded">
+            <h2 class="text-4xl font-bold text-center">{{ $product->name }}</h2>
+            <img src="{{ asset('/' . $product->image) }}" alt="{{ $product->name }}" class="h-64 w-full object-cover mt-4 rounded">
+            <p class="mt-4 text-xl">{{ $product->description }}</p>
+            <p class="mt-4 text-2xl">{{ $product->price }}€</p>
+            <button onclick="addToCart(<?= $product->id ?>)" class="bg-blue-600 text-white rounded py-2 px-4 mt-4">Ajouter au Panier</button>
+        </div>
 
-<script>
-function addToCart(productId) {
-    fetch(`/cart/add/${productId}`, {
-        method: 'POST',
-        headers: {
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute('content'),
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            quantity: 1 // or any quantity you want to pass
-        })
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            alert(data.message);
-            // Optionally, update the cart icon count here
-        } else {
-            alert('Failed to add to cart');
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-</script>
-@endsection
+        <div class="mt-8">
+            <h3 class="text-2xl font-bold">Reviews</h3>
+            @foreach ($product->reviews as $review)
+                <div class="bg-gray-700 p-4 rounded mt-4">
+                    <p>{{ $review->content }}</p>
+                    <p class="mt-2 text-gray-300">- {{ $review->user->name }} - Note: {{ $review->note }}/5</p>
+                </div>
+            @endforeach
+        </div>
+
+        <div class="mt-8">
+            @auth
+                <h3 class="text-2xl font-bold">Add Review</h3>
+                <form action="{{ route('reviews.store') }}" method="POST" class="bg-gray-700 p-4 rounded mt-4">
+                    @csrf
+                    <input type="hidden" name="product_id" value="{{ $product->id }}">
+                    <div class="mt-4">
+                        <label for="note">Note</label>
+                        <select name="note" id="note" class="bg-gray-800 text-white rounded mt-2">
+                            @for ($i = 1; $i <= 5; $i++)
+                                <option value="{{ $i }}">{{ $i }}</option>
+                            @endfor
+                        </select>
+                    </div>
+                    <div class="mt-4">
+                        <label for="content">Review</label>
+                        <textarea name="content" id="content" class="bg-gray-800 text-white rounded mt-2 w-full h-24"></textarea>
+                    </div>
+                    <button type="submit" class="bg-blue-600 text-white rounded py-2 px-4 mt-4">Submit</button>
+                </form>
+            @endauth
+        </div>
+    </div>
+    @endsection
+
+

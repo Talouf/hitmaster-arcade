@@ -1,90 +1,71 @@
+@media (max-width: 1024px) {
+    #nav-links {
+        display: none;
+    }
+
+    #mobile-nav-links {
+        display: flex;
+    }
+}
+
 body {
-    background: linear-gradient(to bottom, #000000, #464343);
-    color: #ffffff;
-}
-.container {
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 15px;
+    background-color: #1a202c;
+    color: #fff;
+    font-family: Roboto, sans-serif;
 }
 
-header img {
-    width: 150px;
+nav {
+    background-color: #2d3748;
+    padding: 1rem;
 }
 
-nav ul {
-    list-style: none;
-    padding: 0;
+nav a {
+    color: #fff;
 }
 
-nav ul li {
-    display: inline;
-    margin-right: 1rem;
+nav a:hover {
+    color: #e53e3e;
 }
 
-nav ul li a {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: bold;
+section {
+    margin-bottom: 2rem;
 }
 
-nav ul li a:hover {
-    color: #E63946;
+section h2 {
+    margin-bottom: 1rem;
 }
 
-.search-form input {
-    padding: 0.5rem;
-    border-radius: 0.25rem;
-    border: 1px solid #ccc;
+section p {
+    margin-bottom: 1rem;
 }
 
-.search-form button {
-    background-color: #E63946;
-    color: #ffffff;
-    border: none;
+.bg-gray-700 {
+    background-color: #2d3748;
+}
+
+.bg-gray-800 {
+    background-color: #2d3748;
+}
+
+.bg-red-600 {
+    background-color: #e53e3e;
+}
+
+button {
+    background-color: #e53e3e;
     padding: 0.5rem 1rem;
     border-radius: 0.25rem;
-    cursor: pointer;
+    color: #fff;
 }
 
-.search-form button:hover {
-    background-color: #c5303b;
+button:hover {
+    background-color: #c53030;
 }
 
-.card {
-    background-color: #282828;
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 1rem 0;
-    width: 300px;
-}
-
-.card img {
-    width: 100%;
-    border-radius: 0.5rem;
-}
-
-.footer {
-    background-color: #282828;
-    padding: 2rem;
-    text-align: center;
-}
-
-.icon {
-    width: 24px;
-    height: 24px;
-    fill: #ffffff;
-    cursor: pointer;
-}
-
-.icon:hover {
-    fill: #E63946;
-}
-
-.review-card {
-    background: linear-gradient(to right, #464343, #000000);
-    border-radius: 0.5rem;
-    padding: 1rem;
-    margin: 1rem;
-    text-align: center;
+input, textarea {
+    background-color: #2d3748;
+    color: #fff;
+    border: 1px solid #4a5568;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
 }

@@ -14,6 +14,7 @@ class CreateNewsTable extends Migration
             $table->string('title');
             $table->text('content');
             $table->timestamp('post_date');
+            $table->string('image')->nullable();
             $table->timestamps();
         });
     }
@@ -23,5 +24,3 @@ class CreateNewsTable extends Migration
         Schema::dropIfExists('news');
     }
 }
-
-

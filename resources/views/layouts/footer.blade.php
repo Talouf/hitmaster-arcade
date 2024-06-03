@@ -1,9 +1,22 @@
-<footer class="footer">
-    <p>HitMaster Arcade</p>
-    <p>&copy; 2024, HitMaster Arcade</p>
-    <form class="mt-4">
-        <label for="email" class="block mb-2 text-sm">Votre Email</label>
-        <input type="email" id="email" class="bg-gray-700 border border-gray-600 rounded py-2 px-4" placeholder="Email">
-        <button type="submit">S'abonner</button>
-    </form>
+<!-- resources/views/layouts/footer.blade.php -->
+
+<footer class="bg-gray-800 p-8 text-center">
+    <div class="container mx-auto">
+        <div class="mb-4">
+            <input type="email" placeholder="Votre Email" class="px-4 py-2 rounded">
+            <button class="ml-2 px-6 py-2 bg-red-600 text-white rounded">S'abonner</button>
+        </div>
+        <p class="text-gray-400">HitMaster Arcade</p>
+        <div class="mt-4 flex justify-center space-x-4">
+            <a href="#" class="text-gray-400 hover:text-white">FAQ</a>
+            <a href="{{ route('about') }}" class="text-gray-400 hover:text-white">À propos de nous</a>
+            <a href="#" class="text-gray-400 hover:text-white">Mentions Légales</a>
+        </div>
+        <!-- <div class="mt-4 flex justify-center space-x-4">
+            <img src="{{ asset('images/visa.png') }}" alt="Visa" class="h-8">
+            <img src="{{ asset('images/mastercard.png') }}" alt="Mastercard" class="h-8">
+            <img src="{{ asset('images/paypal.png') }}" alt="Paypal" class="h-8">
+        </div>-->
+        <p class="mt-4 text-gray-400">2024, HitMaster Arcade</p>
+    </div>
 </footer>

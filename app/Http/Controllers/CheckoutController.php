@@ -3,24 +3,23 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\OrderItem;
-use App\Models\Order;
-use App\Models\ShippingInfo;
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
-use Illuminate\Support\Facades\Session;
+use App\Models\Order;
+use App\Models\OrderItem;
+use App\Models\ShippingInfo;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
     public function checkout(Request $request)
     {
-        $cartItems = OrderItem::where('user_id', session('cart_id'))->where('is_ordered', false)->get();
-        $totalAmount = $cartItems->sum(function ($item) {
-            return $item->quantity * $item->price;
-        });
-
         Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
+        $cartItems = OrderItem::where('user_id', $userId)->where('is_ordered', false)->get();
 
         $lineItems = $cartItems->map(function ($item) {
             return [
@@ -35,6 +34,8 @@ class CheckoutController extends Controller
             ];
         })->toArray();
 
+        Log::info('Line items: ' . json_encode($lineItems));
+
         $session = StripeSession::create([
             'payment_method_types' => ['card'],
             'line_items' => $lineItems,
@@ -43,6 +44,8 @@ class CheckoutController extends Controller
             'cancel_url' => route('checkout.cancel'),
         ]);
 
+        Log::info('Created Stripe session ID: ' . $session->id);
+
         return redirect($session->url);
     }
 
@@ -50,10 +53,19 @@ class CheckoutController extends Controller
     {
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
-        $session = StripeSession::retrieve($request->session_id);
-        $customer_email = $session->customer_details->email;
+        $sessionId = $request->query('session_id');
+        Log::info('Retrieved session ID from query: ' . $sessionId);
 
-        $cartId = session('cart_id');
+        try {
+            $session = StripeSession::retrieve($sessionId);
+        } catch (\Exception $e) {
+            Log::error('Error retrieving Stripe session: ' . $e->getMessage());
+            return redirect()->route('checkout.failed')->with('error', 'Unable to retrieve session.');
+        }
+
+        $customer_email = $session->customer_details->email;
+        $cartId = Session::get('cart_id');
+
         $order = Order::create([
             'user_id' => Auth::check() ? Auth::id() : null,
             'email' => $customer_email,
@@ -61,7 +73,7 @@ class CheckoutController extends Controller
             'total_price' => $session->amount_total / 100,
         ]);
 
-        foreach (OrderItem::where('user_id', $cartId)->where('is_ordered', false)->get() as $item) {
+        foreach (OrderItem::where('user_id', Auth::id() ?? $cartId)->where('is_ordered', false)->get() as $item) {
             $item->update(['is_ordered' => true, 'order_id' => $order->id]);
         }
 

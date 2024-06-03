@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Session;
+use Illuminate\Http\Request;
 use App\Models\Product;
 use App\Models\OrderItem;
-use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 
 class CartController extends Controller
 {
@@ -24,32 +24,31 @@ class CartController extends Controller
             $userId = Session::get('cart_id');
         }
 
-        OrderItem::updateOrCreate(
-            [
+        $orderItem = OrderItem::where('user_id', $userId)
+                              ->where('product_id', $productId)
+                              ->where('is_ordered', false)
+                              ->first();
+
+        if ($orderItem) {
+            $orderItem->quantity += 1;
+            $orderItem->save();
+        } else {
+            OrderItem::create([
                 'user_id' => $userId,
-                'product_id' => $product->id,
-                'is_ordered' => false,
-            ],
-            [
-                'quantity' => DB::raw('quantity + 1'),
+                'product_id' => $productId,
+                'quantity' => 1,
                 'price' => $product->price,
-            ]
-        );
+                'is_ordered' => false,
+            ]);
+        }
 
         return response()->json(['success' => true, 'message' => 'Added to cart successfully']);
     }
 
     public function showCart()
     {
-        if (Auth::check()) {
-            $userId = Auth::id();
-        } else {
-            $userId = Session::get('cart_id');
-        }
-
+        $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
         $cartItems = OrderItem::where('user_id', $userId)->where('is_ordered', false)->get();
         return view('cart.show', compact('cartItems'));
     }
 }
-
-

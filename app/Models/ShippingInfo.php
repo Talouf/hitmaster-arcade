@@ -12,4 +12,8 @@ class ShippingInfo extends Model
     protected $fillable = [
         'user_id', 'order_id', 'email', 'address', 'city', 'state', 'zip_code', 'country',
     ];
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

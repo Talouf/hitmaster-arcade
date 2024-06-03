@@ -1,10 +1,9 @@
-<!-- resources/views/admin/dashboard.blade.php -->
-
 @extends('layouts.app')
 
 @section('content')
 <div class="container">
-    <h1>All Orders</h1>
+    <h1>Admin Dashboard</h1>
+    <h2>All Orders</h2>
     <table class="table">
         <thead>
             <tr>
@@ -25,5 +24,6 @@
             @endforeach
         </tbody>
     </table>
+    <a href="{{ route('admin.news.create') }}" class="btn btn-primary">Create News</a>
 </div>
 @endsection

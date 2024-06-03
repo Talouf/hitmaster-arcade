@@ -8,6 +8,9 @@
                 <li><a href="{{ route('products.index') }}" class="text-white hover:text-gray-300">Produits</a></li>
                 <li><a href="{{ route('contact') }}" class="text-white hover:text-gray-300">Contact</a></li>
                 <li><a href="{{ route('news.index') }}" class="text-white hover:text-gray-300">News</a></li>
+                @if (auth()->guard('admin')->check())
+                <li><a href="{{ route('admin.dashboard') }}" class="text-white hover:text-gray-300">Dashboard</a></li>
+                @endif
             </ul>
         </div>
         <div class="flex items-center space-x-4">
@@ -16,18 +19,23 @@
                 <button type="submit" class="bg-red-500 text-white px-3 py-1">Search</button>
             </form>
             <a href="{{ route('cart.show') }}" class="relative text-white">
-                <i class="fa fa-shopping-cart"></i>
+                <svg class="h-8 w-8 text-red-500" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                    <path stroke="none" d="M0 0h24v24H0z" />
+                    <circle cx="9" cy="19" r="2" />
+                    <circle cx="17" cy="19" r="2" />
+                    <path d="M3 3h2l2 12a3 3 0 0 0 3 2h7a3 3 0 0 0 3 -2l1 -7h-15.2" />
+                </svg>
                 <span class="absolute top-0 right-0 inline-block w-6 h-6 bg-red-600 text-center text-white rounded-full">
                     {{ \App\Models\OrderItem::where('user_id', auth()->id())->where('is_ordered', false)->count() }}
                 </span>
             </a>
             <div class="relative">
-                <button class="text-white hover:text-gray-300">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4c2.761 0 5 2.239 5 5s-2.239 5-5 5-5-2.239-5-5 2.239-5 5-5zm0 2a3 3 0 100 6 3 3 0 000-6z" />
+                <button id="profileButton" class="hover:text-red-600 focus:outline-none">
+                    <svg class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                 </button>
-                <div class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden">
+                <div id="profileMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden">
                     @auth
                     <span class="block px-4 py-2 text-gray-800">Welcome, {{ Auth::user()->name }}</span>
                     <form method="POST" action="{{ route('logout') }}">
@@ -43,3 +51,18 @@
         </div>
     </div>
 </nav>
+
+<script>
+    document.getElementById('profileButton').addEventListener('click', function() {
+        var profileMenu = document.getElementById('profileMenu');
+        profileMenu.classList.toggle('hidden');
+    });
+
+    document.addEventListener('click', function(event) {
+        var profileButton = document.getElementById('profileButton');
+        var profileMenu = document.getElementById('profileMenu');
+        if (!profileButton.contains(event.target) && !profileMenu.contains(event.target)) {
+            profileMenu.classList.add('hidden');
+        }
+    });
+</script>

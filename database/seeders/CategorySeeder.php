@@ -3,15 +3,14 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\Category;
+use Illuminate\Support\Facades\DB;
 
 class CategorySeeder extends Seeder
 {
     public function run()
     {
-        Category::create([
-            'name' => 'Default Category',
-            'description' => 'This is a default category.',
+        DB::table('categories')->insert([
+            ['name' => 'Controllers', 'created_at' => now(), 'updated_at' => now()],
         ]);
     }
 }
