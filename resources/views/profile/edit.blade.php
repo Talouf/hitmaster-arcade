@@ -26,4 +26,5 @@
             </div>
         </div>
     </div>
+    @csrf <!-- Add CSRF protection -->
 </x-app-layout>

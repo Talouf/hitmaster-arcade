@@ -1,3 +1,5 @@
+<!-- resources/views/layouts/navigation.blade.php -->
+
 <nav class="bg-gray-800 p-4">
     <div class="container mx-auto flex justify-between items-center">
         <div class="flex items-center">
@@ -15,6 +17,7 @@
         </div>
         <div class="flex items-center space-x-4">
             <form action="{{ route('search') }}" method="GET" class="flex">
+                @csrf <!-- CSRF Protection -->
                 <input type="text" name="query" placeholder="Search..." class="px-2 py-1">
                 <button type="submit" class="bg-red-500 text-white px-3 py-1">Search</button>
             </form>
@@ -25,10 +28,11 @@
                     <circle cx="17" cy="19" r="2" />
                     <path d="M3 3h2l2 12a3 3 0 0 0 3 2h7a3 3 0 0 0 3 -2l1 -7h-15.2" />
                 </svg>
-                <span class="absolute top-0 right-0 inline-block w-6 h-6 bg-red-600 text-center text-white rounded-full">
-                    {{ \App\Models\OrderItem::where('user_id', auth()->id())->where('is_ordered', false)->count() }}
-                </span>
-            </a>
+                <div>
+                <span>Cart: </span><span id="cart-count">{{ $cartCount }}</span>
+            </div>
+            </a><!-- Example: In your header or navbar -->
+            
             <div class="relative">
                 <button id="profileButton" class="hover:text-red-600 focus:outline-none">
                     <svg class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -37,7 +41,7 @@
                 </button>
                 <div id="profileMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden">
                     @auth
-                    <span class="block px-4 py-2 text-gray-800">Welcome, {{ Auth::user()->name }}</span>
+                    <span class="block px-4 py-2 text-gray-800">Welcome, {{ htmlspecialchars(Auth::user()->name) }}</span> <!-- Sanitize user input -->
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</button>
@@ -51,18 +55,3 @@
         </div>
     </div>
 </nav>
-
-<script>
-    document.getElementById('profileButton').addEventListener('click', function() {
-        var profileMenu = document.getElementById('profileMenu');
-        profileMenu.classList.toggle('hidden');
-    });
-
-    document.addEventListener('click', function(event) {
-        var profileButton = document.getElementById('profileButton');
-        var profileMenu = document.getElementById('profileMenu');
-        if (!profileButton.contains(event.target) && !profileMenu.contains(event.target)) {
-            profileMenu.classList.add('hidden');
-        }
-    });
-</script>

@@ -3,9 +3,9 @@
 @section('content')
     <div class="container mx-auto py-16">
         <div class="bg-gray-800 p-8 rounded">
-            <h2 class="text-4xl font-bold text-center">{{ $product->name }}</h2>
-            <img src="{{ asset('/' . $product->image) }}" alt="{{ $product->name }}" class="h-64 w-full object-cover mt-4 rounded">
-            <p class="mt-4 text-xl">{{ $product->description }}</p>
+            <h2 class="text-4xl font-bold text-center">{{ htmlspecialchars($product->name) }}</h2>
+            <img src="{{ asset('/' . $product->image) }}" alt="{{ htmlspecialchars($product->name) }}" class="h-64 w-full object-cover mt-4 rounded">
+            <p class="mt-4 text-xl">{{ htmlspecialchars($product->description) }}</p>
             <p class="mt-4 text-2xl">{{ $product->price }}€</p>
             <button onclick="addToCart(<?= $product->id ?>)" class="bg-blue-600 text-white rounded py-2 px-4 mt-4">Ajouter au Panier</button>
         </div>
@@ -14,8 +14,8 @@
             <h3 class="text-2xl font-bold">Reviews</h3>
             @foreach ($product->reviews as $review)
                 <div class="bg-gray-700 p-4 rounded mt-4">
-                    <p>{{ $review->content }}</p>
-                    <p class="mt-2 text-gray-300">- {{ $review->user->name }} - Note: {{ $review->note }}/5</p>
+                    <p>{{ htmlspecialchars($review->content) }}</p>
+                    <p class="mt-2 text-gray-300">- {{ htmlspecialchars($review->user->name) }} - Note: {{ $review->note }}/5</p>
                 </div>
             @endforeach
         </div>
@@ -43,6 +43,4 @@
             @endauth
         </div>
     </div>
-    @endsection
-
-
+@endsection

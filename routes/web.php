@@ -71,7 +71,7 @@ Route::get('/cart', [CartController::class, 'showCart'])->name('cart.show');
 Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('cart.checkout');
 Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
 Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
-Route::post('/stripe/webhook', [WebhookController::class, 'handleWebhook']);
+Route::delete('/cart/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::get('/checkout/failed', function () {
     return view('checkout.failed');
 })->name('checkout.failed');

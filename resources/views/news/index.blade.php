@@ -10,7 +10,7 @@
             <div class="w-full md:w-1/2 lg:w-1/3 px-4 mb-8">
                 <div class="bg-white shadow-lg rounded-lg overflow-hidden">
                     @if ($newsItem->image)
-                        <img src="{{ asset('images/' . $newsItem->image) }}" alt="{{ $newsItem->title }}" class="w-full h-48 object-cover">
+                        <img src="{{ asset('images/' . urlencode($newsItem->image)) }}" alt="{{ $newsItem->title }}" class="w-full h-48 object-cover">
                     @else
                         <img src="{{ asset('images/default-image.png') }}" alt="Default Image" class="w-full h-48 object-cover">
                     @endif

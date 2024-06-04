@@ -8,7 +8,7 @@
     <title>HitMaster Arcade</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/cart.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/navigation.js'])
 </head>
 <body class="bg-gray-900 text-white">
     <!-- Navbar -->

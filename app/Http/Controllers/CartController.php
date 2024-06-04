@@ -3,14 +3,20 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\Product;
 use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\DB;
+use App\Models\Product;
 
 class CartController extends Controller
 {
+    public function showCart()
+    {
+        $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
+        $cartItems = OrderItem::where('user_id', $userId)->where('is_ordered', false)->get();
+        return view('cart.show', compact('cartItems'));
+    }
+
     public function addToCart(Request $request, $productId)
     {
         $product = Product::findOrFail($productId);
@@ -45,10 +51,31 @@ class CartController extends Controller
         return response()->json(['success' => true, 'message' => 'Added to cart successfully']);
     }
 
-    public function showCart()
+    public function removeFromCart(Request $request, $productId)
     {
-        $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
-        $cartItems = OrderItem::where('user_id', $userId)->where('is_ordered', false)->get();
-        return view('cart.show', compact('cartItems'));
+        if (Auth::check()) {
+            $userId = Auth::id();
+        } else {
+            if (!Session::has('cart_id')) {
+                Session::put('cart_id', uniqid());
+            }
+            $userId = Session::get('cart_id');
+        }
+
+        $orderItem = OrderItem::where('user_id', $userId)
+                              ->where('product_id', $productId)
+                              ->where('is_ordered', false)
+                              ->first();
+
+        if ($orderItem) {
+            if ($orderItem->quantity > 1) {
+                $orderItem->quantity -= 1;
+                $orderItem->save();
+            } else {
+                $orderItem->delete();
+            }
+        }
+
+        return response()->json(['success' => true, 'message' => 'Removed from cart successfully']);
     }
 }
