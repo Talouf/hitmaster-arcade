@@ -69,3 +69,23 @@ input, textarea {
     border-radius: 0.25rem;
     padding: 0.5rem;
 }
+.notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #4caf50; /* Green */
+    color: white;
+    border-radius: 5px;
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.5s ease-out;
+}
+
+.notification.error {
+    background-color: #f44336; /* Red */
+}
+
+.notification.fade-out {
+    opacity: 0;
+}

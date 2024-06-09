@@ -54,6 +54,11 @@ Route::prefix('admin')->group(function () {
         // Admin news creation route
         Route::get('/news/create', [AdminController::class, 'createNews'])->name('admin.news.create');
         Route::post('/news', [AdminController::class, 'storeNews'])->name('admin.news.store');
+        Route::delete('/news/{id}', [AdminController::class, 'deleteNews'])->name('admin.news.delete');
+        // Admin product creation routes
+        Route::get('/products/create', [AdminController::class, 'createProduct'])->name('admin.products.create');
+        Route::post('/products', [AdminController::class, 'storeProduct'])->name('admin.products.store');
+        Route::delete('/products/{id}', [AdminController::class, 'deleteProduct'])->name('admin.products.delete');
     });
 });
 
@@ -72,11 +77,16 @@ Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('cart.ch
 Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
 Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 Route::delete('/cart/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+Route::post('/cart/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
+Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
+Route::get('/cart/count', [CartController::class, 'getCartCount']);
 Route::get('/checkout/failed', function () {
     return view('checkout.failed');
 })->name('checkout.failed');
 
 
+Route::get('/profile/add-shipping-info', [ProfileController::class, 'addShippingInfo'])->name('profile.add-shipping-info');
+Route::post('/profile/store-shipping-info', [ProfileController::class, 'storeShippingInfo'])->name('profile.store-shipping-info');
 
 Route::post('/reviews/store', [ReviewController::class, 'store'])->name('reviews.store');
 

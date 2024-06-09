@@ -29,10 +29,10 @@
                     <path d="M3 3h2l2 12a3 3 0 0 0 3 2h7a3 3 0 0 0 3 -2l1 -7h-15.2" />
                 </svg>
                 <div>
-                <span>Cart: </span><span id="cart-count">{{ $cartCount }}</span>
-            </div>
+                    <span>Cart: </span><span id="cart-count">{{ $cartCount }}</span>
+                </div>
             </a><!-- Example: In your header or navbar -->
-            
+
             <div class="relative">
                 <button id="profileButton" class="hover:text-red-600 focus:outline-none">
                     <svg class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -41,7 +41,8 @@
                 </button>
                 <div id="profileMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden">
                     @auth
-                    <span class="block px-4 py-2 text-gray-800">Welcome, {{ htmlspecialchars(Auth::user()->name) }}</span> <!-- Sanitize user input -->
+                    <span class="block px-4 py-2 text-gray-800">Hello, {{ htmlspecialchars(Auth::user()->name) }}</span> <!-- Sanitize user input -->
+                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Profile</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</button>

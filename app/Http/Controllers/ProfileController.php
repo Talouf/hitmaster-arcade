@@ -2,72 +2,63 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\ProfileUpdateRequest;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
+use Illuminate\Support\Facades\Hash;
+use App\Http\Requests\ShippingInfoRequest;
+use App\Models\ShippingInfo;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
-use App\Models\Order;
+use App\Models\User;
+
 
 class ProfileController extends Controller
 {
-    /**
-     * Display the user's profile form.
-     */
-    public function edit(Request $request): View
+    public function edit(Request $request)
     {
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
     }
 
-    /**
-     * Update the user's profile information.
-     */
-    public function update(ProfileUpdateRequest $request): RedirectResponse
+    public function update(Request $request)
     {
-        $request->user()->fill($request->validated());
-
-        if ($request->user()->isDirty('email')) {
-            $request->user()->email_verified_at = null;
-        }
-
-        $request->user()->save();
-
-        return Redirect::route('profile.edit')->with('status', 'profile-updated');
-    }
-
-    /**
-     * Delete the user's account.
-     */
-    public function destroy(Request $request): RedirectResponse
-    {
-        $request->validateWithBag('userDeletion', [
-            'password' => ['required', 'current_password'],
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'surname' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
+            'old_password' => 'nullable|required_with:password|string',
+            'password' => 'nullable|string|min:8|confirmed',
         ]);
 
-        $user = $request->user();
+        $user = Auth::user();
+        $user->name = $request->name;
+        $user->surname = $request->surname;
+        $user->email = $request->email;
 
-        Auth::logout();
+        if ($request->filled('password')) {
+            if (!Hash::check($request->old_password, $user->password)) {
+                return back()->withErrors(['old_password' => 'The provided password does not match our records.']);
+            }
+            $user->password = Hash::make($request->password);
+        }
 
-        $user->delete();
+        $user->save();
 
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
-
-        return Redirect::to('/');
+        return redirect()->route('profile.edit')->with('status', 'Profile updated successfully.');
     }
 
-    /**
-     * Retrieve and display the orders associated with the authenticated user.
-     *
-     * @return \Illuminate\Contracts\View\View
-     */
-    public function orders()
+    public function addShippingInfo(): View
     {
-        $orders = auth()->user()->orders; // Assuming the User model has a relationship defined with the Order model
-        return view('profile.orders', compact('orders'));
+        return view('profile.add-shipping-info');
     }
-    
+
+    public function storeShippingInfo(ShippingInfoRequest $request): RedirectResponse
+    {
+        $shippingInfo = new ShippingInfo($request->validated());
+        $shippingInfo->user_id = Auth::id();
+        $shippingInfo->save();
+
+        return redirect()->route('profile.edit')->with('status', 'shipping-info-added');
+    }
 }
