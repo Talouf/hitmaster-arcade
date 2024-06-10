@@ -48,32 +48,9 @@
                     @endforeach
                 </tbody>
             </table>
-            <form action="{{ route('cart.checkout') }}" method="POST">
+            <form action="{{ route('checkout') }}" method="POST">
                 @csrf
-                <div>
-                    <label for="address">Address</label>
-                    <input type="text" name="address" id="address" required>
-                </div>
-                <div>
-                    <label for="city">City</label>
-                    <input type="text" name="city" id="city" required>
-                </div>
-                <div>
-                    <label for="state">State</label>
-                    <input type="text" name="state" id="state" required>
-                </div>
-                <div>
-                    <label for="zip_code">Zip Code</label>
-                    <input type="text" name="zip_code" id="zip_code" required>
-                </div>
-                <div>
-                    <label for="country">Country</label>
-                    <input type="text" name="country" id="country" required>
-                </div>
-                <form action="{{ route('checkout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
-                </form>
+                <button type="submit" class="btn btn-primary">Proceed to Checkout</button>
             </form>
         @endif
     </div>

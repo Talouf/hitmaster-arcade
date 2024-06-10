@@ -19,6 +19,11 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
+    public function home()
+{
+    $latestProducts = Product::latest()->take(2)->get();
+    return view('home', compact('latestProducts'));
+}
 }
 
 

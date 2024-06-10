@@ -14,7 +14,6 @@ class ShippingInfoRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'email' => 'required|email',
             'address' => 'required|string|max:255',
             'city' => 'required|string|max:255',
             'state' => 'required|string|max:255',

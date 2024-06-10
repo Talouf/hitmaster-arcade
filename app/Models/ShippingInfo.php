@@ -11,8 +11,6 @@ class ShippingInfo extends Model
     protected $table = 'shipping_info';
     protected $fillable = [
         'user_id',
-        'order_id',
-        'email',
         'address',
         'city',
         'state',
@@ -25,8 +23,4 @@ class ShippingInfo extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function order()
-    {
-        return $this->belongsTo(Order::class);
-    }
 }

@@ -28,4 +28,9 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
+    public function shippingInfos()
+    {
+        return $this->hasMany(ShippingInfo::class);
+    }
 }

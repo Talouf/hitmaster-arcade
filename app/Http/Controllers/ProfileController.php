@@ -17,7 +17,7 @@ class ProfileController extends Controller
     public function edit(): View
     {
         $user = Auth::user();
-        $shippingInfos = $user->shippingInfos; // Assuming the user has a relationship with ShippingInfo
+        $shippingInfos = $user->shippingInfos;
 
         return view('profile.edit', compact('user', 'shippingInfos'));
     }

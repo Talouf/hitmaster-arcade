@@ -1,7 +1,6 @@
 @extends('layouts.app')
 
 @section('content')
-<!-- resources/views/profile/add-shipping-info.blade.php -->
 <div class="container">
     <h1>Add Shipping Information</h1>
     <form action="{{ route('profile.store-shipping-info') }}" method="POST">
