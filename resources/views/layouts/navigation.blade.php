@@ -11,7 +11,7 @@
                 <li><a href="{{ route('contact') }}" class="text-white hover:text-gray-300">Contact</a></li>
                 <li><a href="{{ route('news.index') }}" class="text-white hover:text-gray-300">News</a></li>
                 @if (auth()->guard('admin')->check())
-                <li><a href="{{ route('admin.dashboard') }}" class="text-white hover:text-gray-300">Dashboard</a></li>
+                    <li><a href="{{ route('admin.dashboard') }}" class="text-white hover:text-gray-300">Dashboard</a></li>
                 @endif
             </ul>
         </div>
@@ -22,7 +22,8 @@
                 <button type="submit" class="bg-red-500 text-white px-3 py-1">Search</button>
             </form>
             <a href="{{ route('cart.show') }}" class="relative text-white">
-                <svg class="h-8 w-8 text-red-500" width="24" height="24" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="h-8 w-8 text-red-500" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
+                    stroke="currentColor" fill="none" stroke-linecap="round" stroke-linejoin="round">
                     <path stroke="none" d="M0 0h24v24H0z" />
                     <circle cx="9" cy="19" r="2" />
                     <circle cx="17" cy="19" r="2" />
@@ -31,26 +32,36 @@
                 <div>
                     <span>Cart: </span><span id="cart-count">{{ $cartCount }}</span>
                 </div>
-            </a><!-- Example: In your header or navbar -->
+            </a>
 
             <div class="relative">
                 <button id="profileButton" class="hover:text-red-600 focus:outline-none">
                     <svg class="h-8 w-8 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
                     </svg>
                 </button>
                 <div id="profileMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden">
-                    @auth
-                    <span class="block px-4 py-2 text-gray-800">Hello, {{ htmlspecialchars(Auth::user()->name) }}</span> <!-- Sanitize user input -->
-                    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Profile</a>
-                    <form method="POST" action="{{ route('logout') }}">
-                        @csrf
-                        <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</button>
-                    </form>
+                    @if (auth()->guard('admin')->check())
+                        <span class="block px-4 py-2 text-gray-800">Logged in as Admin</span>
+                        <a href="{{ route('admin.dashboard') }}"
+                            class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Dashboard</a>
+                        <form method="POST" action="{{ route('admin.logout') }}">
+                            @csrf
+                            <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</button>
+                        </form>
+                    @elseif (auth()->check())
+                        <a href="{{ route('profile.edit') }}"
+                            class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Profile</a>
+                        <form method="POST" action="{{ route('logout') }}">
+                            @csrf
+                            <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</button>
+                        </form>
                     @else
-                    <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Login</a>
-                    <a href="{{ route('register') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Register</a>
-                    @endauth
+                        <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Login</a>
+                        <a href="{{ route('register') }}"
+                            class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Register</a>
+                    @endif
                 </div>
             </div>
         </div>
