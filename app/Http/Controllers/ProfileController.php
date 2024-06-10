@@ -14,11 +14,12 @@ use App\Models\User;
 
 class ProfileController extends Controller
 {
-    public function edit(Request $request)
+    public function edit(): View
     {
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        $user = Auth::user();
+        $shippingInfos = $user->shippingInfos; // Assuming the user has a relationship with ShippingInfo
+
+        return view('profile.edit', compact('user', 'shippingInfos'));
     }
 
     public function update(Request $request)
@@ -55,10 +56,15 @@ class ProfileController extends Controller
 
     public function storeShippingInfo(ShippingInfoRequest $request): RedirectResponse
     {
+        $user = Auth::user();
+        if ($user->shippingInfos()->count() >= 3) {
+            return redirect()->route('profile.edit')->with('error', 'You can only have up to 3 shipping addresses.');
+        }
+
         $shippingInfo = new ShippingInfo($request->validated());
-        $shippingInfo->user_id = Auth::id();
+        $shippingInfo->user_id = $user->id;
         $shippingInfo->save();
 
-        return redirect()->route('profile.edit')->with('status', 'shipping-info-added');
+        return redirect()->route('profile.edit')->with('status', 'Shipping info added.');
     }
 }

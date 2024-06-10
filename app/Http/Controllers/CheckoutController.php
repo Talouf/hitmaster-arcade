@@ -1,16 +1,18 @@
 <?php
 
+// app/Http/Controllers/CheckoutController.php
+
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Session;
 use Stripe\Stripe;
 use Stripe\Checkout\Session as StripeSession;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ShippingInfo;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Log;
 
 class CheckoutController extends Controller
 {
@@ -46,7 +48,10 @@ class CheckoutController extends Controller
 
         Log::info('Created Stripe session ID: ' . $session->id);
 
-        return redirect($session->url);
+        return view('checkout.index', [
+            'sessionId' => $session->id,
+            'cartItems' => $cartItems
+        ]);
     }
 
     public function success(Request $request)
@@ -89,10 +94,5 @@ class CheckoutController extends Controller
         ]);
 
         return view('checkout.success');
-    }
-
-    public function cancel()
-    {
-        return view('checkout.cancel');
     }
 }
