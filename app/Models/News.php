@@ -20,9 +20,9 @@ class News extends Model
     }
 
     public function getImageUrlAttribute()
-    {
-        return $this->image ? Storage::url($this->image) : asset('images/default-image.png');
-    }
+{
+    return $this->image ? asset('images/' . $this->image) : asset('images/default-image.png');
+}
 }
 
 
