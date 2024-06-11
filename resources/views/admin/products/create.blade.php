@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container">
-    <h1>Add New Product</h1>
+    <h1>Ajouter un nouveau produit</h1>
 
     @if(session('success'))
         <div class="alert alert-success">
@@ -28,7 +28,7 @@
             <label for="image">Image</label>
             <input type="file" name="image" id="image" class="form-control" required>
         </div>
-        <button type="submit" class="btn btn-primary">Add Product</button>
+        <button type="submit" class="btn btn-primary">Ajouter produit</button>
     </form>
 </div>
 @endsection

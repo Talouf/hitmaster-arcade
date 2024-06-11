@@ -4,7 +4,7 @@
 
 @section('content')
 <div class="container mx-auto px-4">
-    <h1 class="text-2xl font-bold mb-4">Order Successful</h1>
-    <p>Thank you for your order! Your order has been successfully placed.</p>
+    <h1 class="text-2xl font-bold mb-4">Achat réussi</h1>
+    <p>Merci pour votre achat! Votre commande a été placée.</p>
 </div>
 @endsection

@@ -53,8 +53,8 @@ class CheckoutController extends Controller
                 'sessionId' => $session->id
             ]);
         } catch (\Exception $e) {
-            Log::error('Error during checkout: ' . $e->getMessage());
-            return redirect()->route('checkout.cancel')->with('error', 'An error occurred during checkout.');
+            Log::error('Erreur lors du paiement : ' . $e->getMessage());
+            return redirect()->route('checkout.cancel')->with('error', 'Une erreur est survenue lors du paiement.');
         }
     }
 
@@ -64,10 +64,10 @@ class CheckoutController extends Controller
             Stripe::setApiKey(env('STRIPE_SECRET'));
 
             $sessionId = $request->query('session_id');
-            Log::info('Retrieved session ID from query: ' . $sessionId);
+            Log::info('ID de session récupéré depuis la requête : ' . $sessionId);
 
             if (!$sessionId) {
-                throw new \Exception('Session ID missing in the request.');
+                throw new \Exception('ID de session manquant dans la requête.');
             }
 
             $session = StripeSession::retrieve($sessionId);
@@ -76,7 +76,7 @@ class CheckoutController extends Controller
             $shipping = $session->shipping_details;
 
             // Log the shipping details for debugging
-            Log::info('Shipping details: ' . json_encode($shipping));
+            Log::info('Détails de livraison : ' . json_encode($shipping));
 
             // Check if a user with this email already exists
             $existingUser = User::where('email', $customer_email)->first();
@@ -84,7 +84,7 @@ class CheckoutController extends Controller
             if ($existingUser) {
                 // If the user is not logged in, redirect to a custom error page
                 if (!Auth::check() || Auth::user()->email !== $customer_email) {
-                    return redirect()->route('checkout.error')->with('error', 'User with this email already exists. Please log in and redo your order.');
+                    return redirect()->route('checkout.error')->with('error', 'Un utilisateur avec cet email existe déjà. Veuillez vous connecter et refaire votre commande.');
                 }
             }
 
@@ -98,13 +98,13 @@ class CheckoutController extends Controller
             ]);
 
             // Log the order creation
-            Log::info('Order created', ['order_id' => $order->id]);
+            Log::info('Commande créée', ['order_id' => $order->id]);
 
             $orderItems = OrderItem::where('user_id', Auth::id() ?? $cartId)->where('is_ordered', false)->get();
             foreach ($orderItems as $item) {
                 $item->update(['is_ordered' => true, 'order_id' => $order->id]);
                 // Log each order item update
-                Log::info('Order item updated', ['order_item_id' => $item->id, 'order_id' => $order->id]);
+                Log::info('Article de commande mis à jour', ['order_item_id' => $item->id, 'order_id' => $order->id]);
             }
 
             // Save shipping information linked to the order
@@ -118,8 +118,8 @@ class CheckoutController extends Controller
                 $shippingInfo->country = $shipping->address->country;
                 $shippingInfo->save();
             } else {
-                Log::error('Error during success handling: Shipping address is null');
-                return redirect()->route('checkout.failed')->with('error', 'An error occurred while processing your order.');
+                Log::error('Erreur lors du traitement de la commande : L\'adresse de livraison est nulle');
+                return redirect()->route('checkout.failed')->with('error', 'Une erreur est survenue lors du traitement de votre commande.');
             }
 
             // Link the order to the user if they create an account later
@@ -129,8 +129,8 @@ class CheckoutController extends Controller
 
             return view('checkout.success');
         } catch (\Exception $e) {
-            Log::error('Error during success handling: ' . $e->getMessage());
-            return redirect()->route('checkout.failed')->with('error', 'An error occurred while processing your order.');
+            Log::error('Erreur lors du traitement de la commande : ' . $e->getMessage());
+            return redirect()->route('checkout.failed')->with('error', 'Une erreur est survenue lors du traitement de votre commande.');
         }
     }
 
@@ -138,6 +138,7 @@ class CheckoutController extends Controller
     {
         return view('checkout.cancel');
     }
+
     public function error()
     {
         return view('checkout.error')->with('error', session('error'));

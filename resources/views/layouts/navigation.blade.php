@@ -9,17 +9,17 @@
                 <li><a href="{{ route('about') }}" class="text-white hover:text-gray-300">À propos</a></li>
                 <li><a href="{{ route('products.index') }}" class="text-white hover:text-gray-300">Produits</a></li>
                 <li><a href="{{ route('contact') }}" class="text-white hover:text-gray-300">Contact</a></li>
-                <li><a href="{{ route('news.index') }}" class="text-white hover:text-gray-300">News</a></li>
+                <li><a href="{{ route('news.index') }}" class="text-white hover:text-gray-300">Actualité</a></li>
                 @if (auth()->guard('admin')->check())
-                    <li><a href="{{ route('admin.dashboard') }}" class="text-white hover:text-gray-300">Dashboard</a></li>
+                    <li><a href="{{ route('admin.dashboard') }}" class="text-white hover:text-gray-300">DashboardAdmin</a></li>
                 @endif
             </ul>
         </div>
         <div class="hidden md:flex items-center space-x-4">
             <form action="{{ route('search') }}" method="GET" class="flex">
                 @csrf <!-- CSRF Protection -->
-                <input type="text" name="query" placeholder="Search..." class="px-2 py-1">
-                <button type="submit" class="bg-red-500 text-white px-3 py-1">Search</button>
+                <input type="text" name="query" placeholder="Recherche..." class="px-2 py-1">
+                <button type="submit" class="bg-red-500 text-white px-3 py-1">Rechercher</button>
             </form>
             <a href="{{ route('cart.show') }}" class="relative text-white">
                 <svg class="h-8 w-8 text-red-500" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -30,7 +30,7 @@
                     <path d="M3 3h2l2 12a3 3 0 0 0 3 2h7a3 3 0 0 0 3 -2l1 -7h-15.2" />
                 </svg>
                 <div>
-                    <span>Cart: </span><span id="cart-count">{{ $cartCount }}</span>
+                    <span>Panier: </span><span id="cart-count">{{ $cartCount }}</span>
                 </div>
             </a>
 
@@ -43,24 +43,24 @@
                 </button>
                 <div id="profileMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden">
                     @if (auth()->guard('admin')->check())
-                        <span class="block px-4 py-2 text-gray-800">Logged in as Admin</span>
+                        <span class="block px-4 py-2 text-gray-800">Connecté en tant qu'Admin</span>
                         <a href="{{ route('admin.dashboard') }}"
                             class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Dashboard</a>
                         <form method="POST" action="{{ route('admin.logout') }}">
                             @csrf
-                            <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</button>
+                            <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Déconnection</button>
                         </form>
                     @elseif (auth()->check())
                         <a href="{{ route('profile.edit') }}"
                             class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Profile</a>
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
-                            <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</button>
+                            <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Déconnection</button>
                         </form>
                     @else
-                        <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Login</a>
+                        <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Connection</a>
                         <a href="{{ route('register') }}"
-                            class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Register</a>
+                            class="block px-4 py-2 text-gray-800 hover:bg-gray-200">S'inscrire</a>
                     @endif
                 </div>
             </div>
@@ -77,8 +77,8 @@
     <div id="mobileMenu" class="md:hidden hidden flex flex-col items-center mt-4 space-y-4">
         <form action="{{ route('search') }}" method="GET" class="flex w-full justify-center">
             @csrf <!-- CSRF Protection -->
-            <input type="text" name="query" placeholder="Search..." class="px-2 py-1">
-            <button type="submit" class="bg-red-500 text-white px-3 py-1">Search</button>
+            <input type="text" name="query" placeholder="Recherche..." class="px-2 py-1">
+            <button type="submit" class="bg-red-500 text-white px-3 py-1">Rechercher</button>
         </form>
         <a href="{{ route('cart.show') }}" class="relative text-white">
             <svg class="h-8 w-8 text-red-500" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -89,7 +89,7 @@
                 <path d="M3 3h2l2 12a3 3 0 0 0 3 2h7a3 3 0 0 0 3 -2l1 -7h-15.2" />
             </svg>
             <div>
-                <span>Cart: </span><span id="cart-count">{{ $cartCount }}</span>
+                <span>Panier: </span><span id="cart-count">{{ $cartCount }}</span>
             </div>
         </a>
         <div class="relative">
@@ -101,22 +101,22 @@
             </button>
             <div id="mobileProfileMenu" class="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg py-2 hidden">
                 @if (auth()->guard('admin')->check())
-                    <span class="block px-4 py-2 text-gray-800">Logged in as Admin</span>
+                    <span class="block px-4 py-2 text-gray-800">Connecté en tant qu'Admin</span>
                     <a href="{{ route('admin.dashboard') }}"
                         class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Dashboard</a>
                     <form method="POST" action="{{ route('admin.logout') }}">
                         @csrf
-                        <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</button>
+                        <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Déconnection</button>
                     </form>
                 @elseif (auth()->check())
                     <a href="{{ route('profile.edit') }}"
                         class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Profile</a>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
-                        <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Logout</button>
+                        <button type="submit" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Déconnection</button>
                     </form>
                 @else
-                    <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Login</a>
+                    <a href="{{ route('login') }}" class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Connection</a>
                     <a href="{{ route('register') }}"
                         class="block px-4 py-2 text-gray-800 hover:bg-gray-200">Register</a>
                 @endif

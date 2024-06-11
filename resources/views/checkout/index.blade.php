@@ -11,7 +11,7 @@
                 <li>{{ $item->product->name }} - {{ $item->quantity }} x ${{ $item->price }}</li>
             @endforeach
         </ul>
-        <button id="checkout-button" class="btn btn-primary">Complete Order</button>
+        <button id="checkout-button" class="btn btn-primary">Terminer la commande</button>
     </div>
 </div>
 

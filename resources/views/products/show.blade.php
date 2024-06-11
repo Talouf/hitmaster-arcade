@@ -13,7 +13,7 @@
     </div>
 
     <div class="mt-8">
-        <h3 class="text-2xl font-bold">Reviews</h3>
+        <h3 class="text-2xl font-bold">Avis</h3>
         @foreach ($product->reviews as $review)
             <div class="bg-gray-700 p-4 rounded mt-4">
                 <p>{{ htmlspecialchars($review->content) }}</p>
@@ -25,7 +25,7 @@
 
     <div class="mt-8">
         @auth
-            <h3 class="text-2xl font-bold">Add Review</h3>
+            <h3 class="text-2xl font-bold">Notez le produit</h3>
             <form action="{{ route('reviews.store') }}" method="POST" class="bg-gray-700 p-4 rounded mt-4">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
@@ -38,11 +38,11 @@
                     </select>
                 </div>
                 <div class="mt-4">
-                    <label for="content">Review</label>
+                    <label for="content">Avis</label>
                     <textarea name="content" id="content"
                         class="bg-gray-800 text-white rounded mt-2 w-full h-24"></textarea>
                 </div>
-                <button type="submit" class="bg-blue-600 text-white rounded py-2 px-4 mt-4">Submit</button>
+                <button type="submit" class="bg-blue-600 text-white rounded py-2 px-4 mt-4">Envoyer</button>
             </form>
         @endauth
     </div>
