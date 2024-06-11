@@ -1,14 +1,30 @@
-document.getElementById('profileButton').addEventListener('click', function () {
-    var profileMenu = document.getElementById('profileMenu');
-    profileMenu.classList.toggle('hidden');
-});
-
 document.addEventListener('click', function (event) {
     var profileButton = document.getElementById('profileButton');
     var profileMenu = document.getElementById('profileMenu');
     if (!profileButton.contains(event.target) && !profileMenu.contains(event.target)) {
         profileMenu.classList.add('hidden');
     }
+
+    var mobileProfileButton = document.getElementById('mobileProfileButton');
+    var mobileProfileMenu = document.getElementById('mobileProfileMenu');
+    if (!mobileProfileButton.contains(event.target) && !mobileProfileMenu.contains(event.target)) {
+        mobileProfileMenu.classList.add('hidden');
+    }
+});
+
+document.getElementById('profileButton').addEventListener('click', function () {
+    var profileMenu = document.getElementById('profileMenu');
+    profileMenu.classList.toggle('hidden');
+});
+
+document.getElementById('mobileProfileButton').addEventListener('click', function () {
+    var mobileProfileMenu = document.getElementById('mobileProfileMenu');
+    mobileProfileMenu.classList.toggle('hidden');
+});
+
+document.getElementById('menuButton').addEventListener('click', function () {
+    var mobileMenu = document.getElementById('mobileMenu');
+    mobileMenu.classList.toggle('hidden');
 });
 
 document.addEventListener("DOMContentLoaded", function () {
@@ -24,16 +40,16 @@ document.addEventListener("DOMContentLoaded", function () {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                quantity: 1 // or any quantity you want to pass
+                quantity: 1
             })
         })
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
                     showNotification(data.message, 'success');
-                    updateCartCount(data.cartCount); // Update the cart count
-                    updateTotalProducts(data.totalProducts); // Update the total products count
-                    updateDropdownCart(data.cartItems); // Update the dropdown cart
+                    updateCartCount(data.cartCount);
+                    updateTotalProducts(data.totalProducts);
+                    updateDropdownCart(data.cartItems);
                 } else {
                     showNotification('Failed to add to cart', 'error');
                 }
@@ -66,8 +82,8 @@ document.addEventListener("DOMContentLoaded", function () {
                     }
     
                     updateCartCount(data.cartCount);
-                    updateTotalProducts(data.totalProducts); // Update the total products count
-                    updateDropdownCart(data.cartItems); // Update the dropdown cart
+                    updateTotalProducts(data.totalProducts);
+                    updateDropdownCart(data.cartItems); 
                 } else {
                     alert('Failed to remove from cart');
                 }
@@ -84,7 +100,7 @@ document.addEventListener("DOMContentLoaded", function () {
             .then(response => response.json())
             .then(data => {
                 if (data.success) {
-                    updateCartCount(data.cartCount); // Update the cart count
+                    updateCartCount(data.cartCount);
                 }
             })
             .catch(error => console.error('Error:', error));
