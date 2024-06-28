@@ -15,16 +15,16 @@ class NewsSeeder extends Seeder
         DB::table('news')->insert([
             [
                 'admin_id' => 1, 
-                'title' => 'Tournoi de Street Fighter V',
-                'content' => 'Le grand tournoi de Street Fighter V aura lieu ce week-end avec des joueurs de tout le pays.',
+                'title' => 'Tournoi de Street Fighter VI',
+                'content' => 'Le grand tournoi de Street Fighter VI aura lieu ce week-end avec des joueurs de tout le pays.',
                 'post_date' => Carbon::now(),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),
             ],
             [
                 'admin_id' => 1, 
-                'title' => 'Nouvelle Mise à Jour pour Tekken 7',
-                'content' => 'Tekken 7 reçoit une nouvelle mise à jour avec des améliorations de gameplay et de nouveaux personnages.',
+                'title' => 'Nouvelle Mise à Jour pour Tekken 8',
+                'content' => 'Tekken 8 reçoit une nouvelle mise à jour avec des améliorations de gameplay et de nouveaux personnages.',
                 'post_date' => Carbon::now(),
                 'created_at' => Carbon::now(),
                 'updated_at' => Carbon::now(),

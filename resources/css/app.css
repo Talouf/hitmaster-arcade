@@ -9,13 +9,38 @@
 }
 
 body {
-    background-color: #1a202c;
+    background: rgb(9,9,10);
+background: -moz-linear-gradient(180deg, rgba(9,9,10,1) 0%, rgba(59,57,57,1) 8%, rgba(9,9,10,1) 35%, rgba(9,9,10,1) 65%, rgba(53,51,51,1) 90%, rgba(9,9,10,1) 100%);
+background: -webkit-linear-gradient(180deg, rgba(9,9,10,1) 0%, rgba(59,57,57,1) 8%, rgba(9,9,10,1) 35%, rgba(9,9,10,1) 65%, rgba(53,51,51,1) 90%, rgba(9,9,10,1) 100%);
+background: linear-gradient(180deg, rgba(9,9,10,1) 0%, rgba(59,57,57,1) 8%, rgba(9,9,10,1) 35%, rgba(9,9,10,1) 65%, rgba(53,51,51,1) 90%, rgba(9,9,10,1) 100%);
+filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#09090a",endColorstr="#09090a",GradientType=1);
     color: #fff;
     font-family: Roboto, sans-serif;
 }
 
+.review_bg {
+    background: rgb(255, 255, 255);
+    background: -moz-linear-gradient(180deg, rgba(255, 255, 255, 1) 10%, rgba(153, 153, 153, 1) 100%);
+    background: -webkit-linear-gradient(180deg, rgba(255, 255, 255, 1) 10%, rgba(153, 153, 153, 1) 100%);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 1) 10%, rgba(153, 153, 153, 1) 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#999999", GradientType=1);
+    color: black;
+}
+
+.review_bg.rounded {
+    border-radius: 2.75rem;
+}
+.h-40{
+    border-radius: 3.5rem;
+}
+
+.home_border_top {
+    border-top: thin solid #A5A5A5;
+    margin-left: 10%;
+    margin-right: 10%;
+}
+
 nav {
-    background-color: #2d3748;
     padding: 1rem;
 }
 
@@ -39,7 +64,7 @@ section p {
     margin-bottom: 1rem;
 }
 
-.bg-gray-700 {
+/*.bg-gray-700 {
     background-color: #2d3748;
 }
 
@@ -50,7 +75,7 @@ section p {
 .bg-red-600 {
     background-color: #e53e3e;
 }
-
+*/
 button {
     background-color: #e53e3e;
     padding: 0.5rem 1rem;
@@ -62,19 +87,22 @@ button:hover {
     background-color: #c53030;
 }
 
-input, textarea {
+input,
+textarea {
     background-color: #2d3748;
     color: #fff;
     border: 1px solid #4a5568;
     border-radius: 0.25rem;
     padding: 0.5rem;
 }
+
 .notification {
     position: fixed;
     top: 20px;
     right: 20px;
     padding: 10px 20px;
-    background-color: #4caf50; /* Green */
+    background-color: #4caf50;
+    /* Green */
     color: white;
     border-radius: 5px;
     z-index: 1000;
@@ -83,9 +111,78 @@ input, textarea {
 }
 
 .notification.error {
-    background-color: #f44336; /* Red */
+    background-color: #f44336;
+    /* Red */
 }
 
 .notification.fade-out {
     opacity: 0;
+}
+
+.h-13{
+    height: 8rem;
+}
+
+#searchInput {
+    width: 0;
+    transition: width 0.3s ease-in-out;
+}
+
+#searchInput.w-48 {
+    width: 12rem; 
+}
+/* Hide all products and news items by default on mobile */
+@media (max-width: 768px) {
+    .product-item,
+    .news-item {
+        display: none;
+    }
+
+    /* Show only the first product and news item on mobile */
+    .product-item:first-child,
+    .news-item:first-child {
+        display: block;
+    }
+}
+/* Ensure all review items have the same height */
+.reviews-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 0 1rem; /* Add padding to create space on the left and right */
+}
+
+.review-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+    margin: 0.5rem;
+    max-width: 23%; /* Ensure the review items do not exceed the container width */
+    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+}
+
+.review-item p {
+    margin: 0.5rem 0;
+}
+
+/* Center reviews on mobile screens */
+@media (max-width: 768px) {
+    .reviews-container {
+        padding: 0 0.5rem; /* Adjust padding for mobile view */
+        flex-direction: column; /* Stack reviews vertically */
+        align-items: center; /* Center reviews horizontally */
+    }
+
+    .review-item {
+        max-width: 65%; /* Ensure the review items take full width on mobile */
+        margin: 0.5rem auto; /* Center the review items */
+    }
+}
+
+/* Adjust spacing for larger screens */
+@media (min-width: 769px) {
+    .reviews-container {
+        justify-content: space-around; /* Distribute space evenly */
+    }
 }

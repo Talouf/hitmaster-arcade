@@ -3,11 +3,11 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
-    <h1>Acualités</h1>
-    <div class="flex flex-wrap -mx-4">
+<div class="container mx-auto px-4">
+    <h1 class="text-3xl font-bold text-center my-8">Actualités</h1>
+    <div class="flex flex-wrap justify-center -mx-4">
         @foreach ($news as $newsItem)
-            <div class="w-full md:w-1/2 lg:w-1/3 px-4 mb-8">
+            <div class="w-full sm:w-1/2 lg:w-1/3 px-4 mb-8">
                 <div class="bg-white shadow-lg rounded-lg overflow-hidden">
                     @if ($newsItem->image)
                         <img src="{{ asset('images/' . urlencode($newsItem->image)) }}" alt="{{ $newsItem->title }}" class="w-full h-48 object-cover">

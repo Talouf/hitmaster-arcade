@@ -159,3 +159,20 @@ document.addEventListener("DOMContentLoaded", function () {
         }, 2000);
     }
 });
+
+document.getElementById('searchInput').addEventListener('focus', function () {
+    this.classList.add('w-64'); // Add a class to expand the search bar
+});
+
+document.getElementById('searchInput').addEventListener('blur', function () {
+    this.classList.remove('w-64'); // Remove the class to shrink the search bar
+});
+
+document.getElementById('searchIcon').addEventListener('click', function () {
+    var searchInput = document.getElementById('searchInput');
+    var searchButton = document.getElementById('searchButton');
+    searchInput.classList.toggle('w-0');
+    searchInput.classList.toggle('w-48');
+    searchButton.classList.toggle('hidden');
+    searchInput.focus();
+});

@@ -7,19 +7,19 @@ use Illuminate\Support\Facades\Route;
     <!-- Session Status -->
     <x-auth-session-status class="mb-4" :status="session('status')" />
 
-    <form method="POST" action="{{ route('login') }}" class="max-w-md mx-auto shadow-md rounded px-8 pt-6 pb-8 mb-4">
+    <form method="POST" action="{{ route('login') }}" class="max-w-md mx-auto shadow-md rounded px-8 pt-6 pb-8 mb-4" style="font-family: 'Roboto', sans-serif; font-weight: 400; color: #FFFFFF;">
         @csrf
 
         <!-- Email Address -->
-        <div class="mb-4 t">
-            <x-input-label for="email" :value="__('Email')" />
+        <div class="mb-4">
+            <x-input-label for="email" :value="__('Email')" style="font-family: 'Roboto', sans-serif; font-weight: 400; color: #FFFFFF;" />
             <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
             <x-input-error :messages="$errors->get('email')" class="mt-2" />
         </div>
 
         <!-- Password -->
         <div class="mb-6">
-            <x-input-label for="password" :value="__('Password')" />
+            <x-input-label for="password" :value="__('Password')" style="font-family: 'Roboto', sans-serif; font-weight: 400; color: #FFFFFF;" />
             <x-text-input id="password" class="block mt-1 w-full" type="password" name="password" required autocomplete="current-password" />
             <x-input-error :messages="$errors->get('password')" class="mt-2" />
         </div>
@@ -39,7 +39,7 @@ use Illuminate\Support\Facades\Route;
                 </a>
             @endif
 
-            <x-primary-button class="ml-3">
+            <x-primary-button class="ml-3" style="font-family: 'Roboto', sans-serif; font-weight: 400; color: #FFFFFF;">
                 {{ __('Log in') }}
             </x-primary-button>
         </div>

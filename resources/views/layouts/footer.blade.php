@@ -1,6 +1,7 @@
 <!-- resources/views/layouts/footer.blade.php -->
 
-<footer class="bg-gray-800 p-8 text-center mt-auto">
+<div class="home_border_top"></div>
+<footer class="p-8 text-center mt-auto">
     <div class="container mx-auto">
         <div class="mb-4">
             <input type="email" placeholder="Votre Email" class="px-4 py-2 rounded">

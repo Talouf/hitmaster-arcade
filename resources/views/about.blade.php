@@ -3,10 +3,10 @@
 @section('title', 'À propos - HitMaster Arcade')
 
 @section('content')
-<section class="text-center mb-8">
+<section class="text-center mb-8 px-4">
     <h1 class="text-4xl font-bold">À propos de HitMaster Arcade</h1>
     <p class="text-gray-400 mt-4">Votre destination ultime pour des contrôleurs de jeu de qualité supérieure.</p>
-    <div class="mt-8 text-left space-y-4">
+    <div class="mt-8 text-center space-y-4 max-w-3xl mx-auto">
         <h2 class="text-3xl font-bold">Notre Histoire</h2>
         <p>Chez HitMaster Arcade, nous sommes passionnés par le jeu et nous croyons en la création de produits qui améliorent véritablement l'expérience de jeu. Fondée en 2020, notre mission est de fournir des contrôleurs de jeu de haute qualité qui répondent aux besoins des joueurs de tous niveaux.</p>
 

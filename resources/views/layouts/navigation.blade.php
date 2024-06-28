@@ -1,10 +1,15 @@
 <!-- resources/views/layouts/navigation.blade.php -->
 
-<nav class="bg-gray-800 p-4">
+<nav class="p-4">
     <div class="container mx-auto flex justify-between items-center">
+        <!-- Logo on the left -->
         <div class="flex items-center">
-            <img src="{{ asset('images/hitmaster.png') }}" alt="HitMaster Arcade Logo" class="h-12">
-            <ul class="hidden md:flex space-x-4 ml-6">
+            <img src="{{ asset('images/hitmaster.png') }}" alt="HitMaster Arcade Logo" class="h-13">
+        </div>
+
+        <!-- Main menu in the middle -->
+        <div class="flex-grow flex justify-center">
+            <ul class="hidden md:flex space-x-4" style="font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 18px; color: #FFFFFF;">
                 <li><a href="{{ route('home') }}" class="text-white hover:text-gray-300">Accueil</a></li>
                 <li><a href="{{ route('about') }}" class="text-white hover:text-gray-300">À propos</a></li>
                 <li><a href="{{ route('products.index') }}" class="text-white hover:text-gray-300">Produits</a></li>
@@ -15,11 +20,18 @@
                 @endif
             </ul>
         </div>
+
+        <!-- Search bar, cart, and profile on the right -->
         <div class="hidden md:flex items-center space-x-4">
-            <form action="{{ route('search') }}" method="GET" class="flex">
+            <form action="{{ route('search') }}" method="GET" class="flex items-center relative">
                 @csrf <!-- CSRF Protection -->
-                <input type="text" name="query" placeholder="Recherche..." class="px-2 py-1">
-                <button type="submit" class="bg-red-500 text-white px-3 py-1">Rechercher</button>
+                <input type="text" name="query" placeholder="Recherche..." class="px-2 py-1 transition-all duration-300 ease-in-out w-0" id="searchInput">
+                <button type="submit" class="bg-red-500 text-white px-3 py-1 hidden" id="searchButton">Rechercher</button>
+                <button type="button" class="text-white" id="searchIcon">
+                    <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 18a8 8 0 100-16 8 8 0 000 16zm6-2l4 4" />
+                    </svg>
+                </button>
             </form>
             <a href="{{ route('cart.show') }}" class="relative text-white">
                 <svg class="h-8 w-8 text-red-500" width="24" height="24" viewBox="0 0 24 24" stroke-width="2"
@@ -65,6 +77,8 @@
                 </div>
             </div>
         </div>
+
+        <!-- Mobile menu button -->
         <div class="md:hidden flex items-center space-x-4">
             <button id="menuButton" class="text-white focus:outline-none">
                 <svg class="h-8 w-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -74,7 +88,9 @@
             </button>
         </div>
     </div>
-    <div id="mobileMenu" class="md:hidden hidden flex flex-col items-center mt-4 space-y-4">
+
+    <!-- Mobile menu -->
+    <div id="mobileMenu" class="md:hidden flex flex-col items-center mt-4 space-y-4">
         <form action="{{ route('search') }}" method="GET" class="flex w-full justify-center">
             @csrf <!-- CSRF Protection -->
             <input type="text" name="query" placeholder="Recherche..." class="px-2 py-1">
@@ -132,6 +148,5 @@
                 <li><a href="{{ route('admin.dashboard') }}" class="text-white hover:text-gray-300">Dashboard</a></li>
             @endif
         </ul>
-
     </div>
 </nav>
