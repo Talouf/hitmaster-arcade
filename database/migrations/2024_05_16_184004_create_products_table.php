@@ -18,6 +18,7 @@ class CreateProductsTable extends Migration
             $table->integer('stock_quantity')->default(0);
             $table->foreignId('category_id')->default(1)->constrained('categories')->onDelete('cascade'); // Default to category ID 1
             $table->timestamps();
+            $table->softDeletes(); 
         });
     }
 
@@ -26,7 +27,6 @@ class CreateProductsTable extends Migration
         Schema::dropIfExists('products');
     }
 }
-
 
 
 

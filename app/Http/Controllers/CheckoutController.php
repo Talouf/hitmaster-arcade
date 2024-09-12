@@ -12,6 +12,8 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\ShippingInfo;
 use App\Models\User;
+use App\Models\Product;
+use App\Models\Payment;
 
 class CheckoutController extends Controller
 {
@@ -53,8 +55,8 @@ class CheckoutController extends Controller
                 'sessionId' => $session->id
             ]);
         } catch (\Exception $e) {
-            Log::error('Erreur lors du paiement : ' . $e->getMessage());
-            return redirect()->route('checkout.cancel')->with('error', 'Une erreur est survenue lors du paiement.');
+            Log::error('Error during payment: ' . $e->getMessage());
+            return redirect()->route('checkout.cancel')->with('error', 'An error occurred during payment.');
         }
     }
 
@@ -64,10 +66,10 @@ class CheckoutController extends Controller
             Stripe::setApiKey(env('STRIPE_SECRET'));
 
             $sessionId = $request->query('session_id');
-            Log::info('ID de session récupéré depuis la requête : ' . $sessionId);
+            Log::info('Session ID retrieved from request: ' . $sessionId);
 
             if (!$sessionId) {
-                throw new \Exception('ID de session manquant dans la requête.');
+                throw new \Exception('Session ID is missing in the request.');
             }
 
             $session = StripeSession::retrieve($sessionId);
@@ -75,63 +77,84 @@ class CheckoutController extends Controller
             $customer_email = $session->customer_details->email;
             $shipping = $session->shipping_details;
 
-            // Log the shipping details for debugging
-            Log::info('Détails de livraison : ' . json_encode($shipping));
+            Log::info('Shipping details: ' . json_encode($shipping));
 
-            // Check if a user with this email already exists
             $existingUser = User::where('email', $customer_email)->first();
 
-            if ($existingUser) {
-                // If the user is not logged in, redirect to a custom error page
-                if (!Auth::check() || Auth::user()->email !== $customer_email) {
-                    return redirect()->route('checkout.error')->with('error', 'Un utilisateur avec cet email existe déjà. Veuillez vous connecter et refaire votre commande.');
-                }
+            if ($existingUser && (!Auth::check() || Auth::user()->email !== $customer_email)) {
+                return redirect()->route('checkout.error')->with('error', 'A user with this email already exists. Please log in and try again.');
             }
 
-            $cartId = Session::get('cart_id');
+            $order = $this->placeOrder($session);
 
-            $order = Order::create([
-                'user_id' => Auth::check() ? Auth::id() : null,
-                'email' => $customer_email,
-                'order_date' => now(),
-                'total_price' => $session->amount_total / 100,
-            ]);
-
-            // Log the order creation
-            Log::info('Commande créée', ['order_id' => $order->id]);
-
-            $orderItems = OrderItem::where('user_id', Auth::id() ?? $cartId)->where('is_ordered', false)->get();
-            foreach ($orderItems as $item) {
-                $item->update(['is_ordered' => true, 'order_id' => $order->id]);
-                // Log each order item update
-                Log::info('Article de commande mis à jour', ['order_item_id' => $item->id, 'order_id' => $order->id]);
-            }
-
-            // Save shipping information linked to the order
             if ($shipping && $shipping->address) {
-                $shippingInfo = new ShippingInfo();
-                $shippingInfo->order_id = $order->id;
-                $shippingInfo->address = $shipping->address->line1;
-                $shippingInfo->city = $shipping->address->city;
-                $shippingInfo->state = $shipping->address->state;
-                $shippingInfo->zip_code = $shipping->address->postal_code;
-                $shippingInfo->country = $shipping->address->country;
-                $shippingInfo->save();
+                $this->saveShippingInfo($order, $shipping);
             } else {
-                Log::error('Erreur lors du traitement de la commande : L\'adresse de livraison est nulle');
-                return redirect()->route('checkout.failed')->with('error', 'Une erreur est survenue lors du traitement de votre commande.');
+                Log::error('Error processing order: Shipping address is null');
+                return redirect()->route('checkout.failed')->with('error', 'An error occurred while processing your order.');
             }
 
-            // Link the order to the user if they create an account later
+            $this->createPayment($order, $session);
+
             if ($existingUser && !$order->user_id) {
                 $order->update(['user_id' => $existingUser->id]);
             }
 
             return view('checkout.success');
         } catch (\Exception $e) {
-            Log::error('Erreur lors du traitement de la commande : ' . $e->getMessage());
-            return redirect()->route('checkout.failed')->with('error', 'Une erreur est survenue lors du traitement de votre commande.');
+            Log::error('Error processing order: ' . $e->getMessage());
+            return redirect()->route('checkout.failed')->with('error', 'An error occurred while processing your order.');
         }
+    }
+
+    private function placeOrder($session)
+    {
+        $order = Order::create([
+            'user_id' => Auth::check() ? Auth::id() : null,
+            'email' => $session->customer_details->email,
+            'order_date' => now(),
+            'total_price' => $session->amount_total / 100,
+            'status' => 'paid'
+        ]);
+
+        Log::info('Order created', ['order_id' => $order->id]);
+
+        $orderItems = OrderItem::where('user_id', Auth::id() ?? Session::get('cart_id'))
+            ->where('is_ordered', false)
+            ->get();
+
+        foreach ($orderItems as $item) {
+            $item->update(['is_ordered' => true, 'order_id' => $order->id]);
+            Log::info('Order item updated', ['order_item_id' => $item->id, 'order_id' => $order->id]);
+            
+            $product = Product::find($item->product_id);
+            $product->decrement('stock_quantity', $item->quantity);
+        }
+
+        return $order;
+    }
+
+    private function saveShippingInfo($order, $shipping)
+    {
+        $shippingInfo = new ShippingInfo();
+        $shippingInfo->order_id = $order->id;
+        $shippingInfo->address = $shipping->address->line1;
+        $shippingInfo->city = $shipping->address->city;
+        $shippingInfo->state = $shipping->address->state;
+        $shippingInfo->zip_code = $shipping->address->postal_code;
+        $shippingInfo->country = $shipping->address->country;
+        $shippingInfo->save();
+    }
+
+    private function createPayment($order, $session)
+    {
+        Payment::create([
+            'order_id' => $order->id,
+            'amount' => $session->amount_total / 100,
+            'payment_date' => now(),
+            'payment_method' => 'stripe',
+            'status' => 'completed'
+        ]);
     }
 
     public function cancel()
@@ -142,5 +165,29 @@ class CheckoutController extends Controller
     public function error()
     {
         return view('checkout.error')->with('error', session('error'));
+    }
+
+    public function updateOrderStatus($orderId, $status)
+    {
+        $order = Order::findOrFail($orderId);
+        $order->status = $status;
+        $order->save();
+
+        return redirect()->route('orders.show', $orderId)->with('success', 'Order status updated.');
+    }
+
+    public function userOrders()
+    {
+        $userId = auth()->user()->id;
+        $orders = Order::where('user_id', $userId)->get();
+
+        return view('orders.index', compact('orders'));
+    }
+
+    public function showOrder($id)
+    {
+        $order = Order::with('orderItems')->findOrFail($id);
+
+        return view('orders.show', compact('order'));
     }
 }

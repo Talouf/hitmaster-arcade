@@ -7,6 +7,7 @@ use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Product;
+use App\Models\Order;
 
 class CartController extends Controller
 {
@@ -15,27 +16,28 @@ class CartController extends Controller
         $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
         $cartItems = OrderItem::where('user_id', $userId)->where('is_ordered', false)->get();
         $totalProducts = $cartItems->sum('quantity');
+
         return view('cart.show', compact('cartItems', 'totalProducts'));
     }
 
     public function addToCart(Request $request, $productId)
     {
         $product = Product::findOrFail($productId);
-
-        if (Auth::check()) {
-            $userId = Auth::id();
-        } else {
-            if (!Session::has('cart_id')) {
-                Session::put('cart_id', uniqid());
-            }
-            $userId = Session::get('cart_id');
+    
+        if ($product->stock_quantity < 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Product is out of stock',
+            ], 400);
         }
 
+        $userId = Auth::check() ? Auth::id() : (Session::get('cart_id') ?? Session::put('cart_id', uniqid()));
+    
         $orderItem = OrderItem::where('user_id', $userId)
             ->where('product_id', $productId)
             ->where('is_ordered', false)
             ->first();
-
+    
         if ($orderItem) {
             $orderItem->quantity += 1;
             $orderItem->save();
@@ -48,38 +50,47 @@ class CartController extends Controller
                 'is_ordered' => false,
             ]);
         }
+    
+        $product->decrement('stock_quantity');
 
         $cartCount = OrderItem::where('user_id', $userId)
             ->where('is_ordered', false)
             ->sum('quantity');
+    
         $totalProducts = OrderItem::where('user_id', $userId)
             ->where('is_ordered', false)
             ->sum('quantity');
+    
         $cartItems = OrderItem::where('user_id', $userId)
             ->where('is_ordered', false)
             ->get();
-
+    
         return response()->json([
             'success' => true,
             'message' => 'Added to cart successfully',
             'cartCount' => $cartCount,
             'totalProducts' => $totalProducts,
-            'cartItems' => $cartItems
+            'cartItems' => $cartItems,
         ]);
+    }
+
+    public function linkCartToUser()
+    {
+        if (Auth::check()) {
+            $userId = Auth::id();
+            $tempCartId = Session::get('cart_id');
+
+            OrderItem::where('user_id', $tempCartId)->update(['user_id' => $userId]);
+
+            Session::forget('cart_id');
+        }
     }
 
     public function removeFromCart(Request $request, $productId)
     {
         $quantityToRemove = $request->input('quantity', 1);
 
-        if (Auth::check()) {
-            $userId = Auth::id();
-        } else {
-            if (!Session::has('cart_id')) {
-                Session::put('cart_id', uniqid());
-            }
-            $userId = Session::get('cart_id');
-        }
+        $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
 
         $orderItem = OrderItem::where('user_id', $userId)
             ->where('product_id', $productId)
@@ -93,6 +104,9 @@ class CartController extends Controller
             } else {
                 $orderItem->delete();
             }
+
+            $product = Product::find($productId);
+            $product->increment('stock_quantity', $quantityToRemove);
         }
 
         $remainingQuantity = $orderItem ? $orderItem->quantity : 0;
@@ -117,11 +131,7 @@ class CartController extends Controller
 
     public function getCartCount()
     {
-        if (Auth::check()) {
-            $userId = Auth::id();
-        } else {
-            $userId = Session::get('cart_id');
-        }
+        $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
 
         $cartCount = OrderItem::where('user_id', $userId)
             ->where('is_ordered', false)

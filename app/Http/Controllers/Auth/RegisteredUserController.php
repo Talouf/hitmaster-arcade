@@ -51,6 +51,9 @@ class RegisteredUserController extends Controller
             ->whereNull('user_id')
             ->update(['user_id' => $user->id]);
 
+        // Remove email from orders to avoid redundancy
+        Order::where('email', $user->email)->update(['email' => null]);
+
         return redirect(route('home', absolute: false));
     }
 }
