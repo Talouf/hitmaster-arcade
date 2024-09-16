@@ -8,6 +8,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Product;
 use App\Models\Order;
+use App\Models\Order;
 
 class CartController extends Controller
 {
@@ -18,6 +19,7 @@ class CartController extends Controller
 
         // Assure-toi de calculer le nombre total de produits
         $totalProducts = $cartItems->sum('quantity');
+
 
         return view('cart.show', compact('cartItems', 'totalProducts'));
     }
@@ -100,14 +102,7 @@ class CartController extends Controller
     {
         $quantityToRemove = $request->input('quantity', 1);
 
-        if (Auth::check()) {
-            $userId = Auth::id();
-        } else {
-            if (!Session::has('cart_id')) {
-                Session::put('cart_id', uniqid());
-            }
-            $userId = Session::get('cart_id');
-        }
+        $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
 
         $orderItem = OrderItem::where('user_id', $userId)
             ->where('product_id', $productId)
@@ -121,6 +116,9 @@ class CartController extends Controller
             } else {
                 $orderItem->delete();
             }
+
+            $product = Product::find($productId);
+            $product->increment('stock_quantity', $quantityToRemove);
         }
 
         $remainingQuantity = $orderItem ? $orderItem->quantity : 0;
@@ -146,11 +144,7 @@ class CartController extends Controller
     // Reintroduced getCartCount method
     public function getCartCount()
     {
-        if (Auth::check()) {
-            $userId = Auth::id();
-        } else {
-            $userId = Session::get('cart_id');
-        }
+        $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
 
         $cartCount = OrderItem::where('user_id', $userId)
             ->where('is_ordered', false)

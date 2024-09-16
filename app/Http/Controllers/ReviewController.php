@@ -9,15 +9,15 @@ use Illuminate\Http\Request;
 class ReviewController extends Controller
 {
     public function store(Request $request)
-{
-    $request->validate([
-        'product_id' => 'required|exists:products,id',
-        'rating' => 'required|integer|between:1,5',
-        'content' => 'required|string',
-    ]);
+    {
+        $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'rating' => 'required|integer|between:1,5',
+            'content' => 'required|string',
+        ]);
 
-    $user = auth()->user();
-    $productId = $request->input('product_id');
+        $user = auth()->user();
+        $productId = $request->input('product_id');
 
     // Vérifier si l'utilisateur a commandé le produit
     $hasOrdered = Order::where('user_id', $user->id)

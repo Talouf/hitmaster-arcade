@@ -14,7 +14,10 @@
                 </li>
             @endforeach
         </ul>
-        <button id="checkout-button" class="btn btn-primary bg-blue-500 text-white py-2 px-4 rounded">Terminer la commande</button>
+        <div class="mt-4">
+            <p class="text-xl font-bold">Total: ${{ $cartItems->sum(function($item) { return $item->quantity * $item->price; }) }}</p>
+        </div>
+        <button id="checkout-button" class="mt-4 bg-blue-500 text-white py-2 px-4 rounded">Complete Order</button>
     </div>
 </div>
 

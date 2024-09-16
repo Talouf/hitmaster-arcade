@@ -63,6 +63,7 @@ class AdminController extends Controller
         return redirect()->route('news.index')->with('success', 'News created successfully.');
     }
 
+
     public function deleteNews($id)
     {
         $news = News::findOrFail($id);
@@ -84,6 +85,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required|string',
             'price' => 'required|numeric',
+            'stock_quantity' => 'required|integer|min:0',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
