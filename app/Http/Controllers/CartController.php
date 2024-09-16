@@ -8,7 +8,6 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Product;
 use App\Models\Order;
-use App\Models\Order;
 
 class CartController extends Controller
 {
