@@ -1,7 +1,5 @@
 <?php
 
-// routes/web.php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NewsController;
@@ -17,6 +15,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\AdminDashboardController;
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -30,8 +29,7 @@ Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 
-
-// Routes for the user dashboard
+// User dashboard routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -39,34 +37,30 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile/orders', [ProfileController::class, 'orders'])->name('profile.orders');
 });
 
-// Routes for administrators
+// Admin routes
 Route::prefix('admin')->group(function () {
-    // Admin login routes
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
     Route::middleware(['auth:admin'])->group(function () {
-        // Admin dashboard route
-        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-        // Admin news creation route
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
         Route::get('/news/create', [AdminController::class, 'createNews'])->name('admin.news.create');
         Route::post('/news', [AdminController::class, 'storeNews'])->name('admin.news.store');
         Route::delete('/news/{id}', [AdminController::class, 'deleteNews'])->name('admin.news.delete');
-        // Admin product creation routes
         Route::get('/products/create', [AdminController::class, 'createProduct'])->name('admin.products.create');
         Route::post('/products', [AdminController::class, 'storeProduct'])->name('admin.products.store');
         Route::delete('/products/{id}', [AdminController::class, 'deleteProduct'])->name('admin.products.delete');
-        Route::get('/admin/news/{id}/edit', [AdminController::class, 'editNews'])->name('admin.news.edit');
-        Route::put('/admin/news/{id}', [AdminController::class, 'updateNews'])->name('admin.news.update');
-        Route::get('/admin/products/{id}/edit', [AdminController::class, 'editProduct'])->name('admin.products.edit');
-        Route::put('/admin/products/{id}', [AdminController::class, 'updateProduct'])->name('admin.products.update');
-        Route::put('/admin/orders/{id}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.orders.updateStatus');
-        Route::get('/admin/orders/{id}', [AdminController::class, 'showOrder'])->name('admin.orders.show');
+        Route::get('/news/{id}/edit', [AdminController::class, 'editNews'])->name('admin.news.edit');
+        Route::put('/news/{id}', [AdminController::class, 'updateNews'])->name('admin.news.update');
+        Route::get('/products/{id}/edit', [AdminController::class, 'editProduct'])->name('admin.products.edit');
+        Route::put('/products/{id}', [AdminController::class, 'updateProduct'])->name('admin.products.update');
+        Route::put('/orders/{id}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.orders.updateStatus');
+        Route::get('/orders/{id}', [AdminController::class, 'showOrder'])->name('admin.orders.show');
     });
 });
 
-// Stripe payment routes
+// Payment routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
     Route::post('/checkout', [PaymentController::class, 'processCheckout'])->name('checkout.process');
@@ -87,12 +81,13 @@ Route::get('/checkout/failed', function () {
     return view('checkout.failed');
 })->name('checkout.failed');
 
-
 Route::get('/profile/add-shipping-info', [ProfileController::class, 'addShippingInfo'])->name('profile.add-shipping-info');
 Route::post('/profile/store-shipping-info', [ProfileController::class, 'storeShippingInfo'])->name('profile.store-shipping-info');
 
 Route::post('/reviews/store', [ReviewController::class, 'store'])->name('reviews.store');
 
-
+// API routes
+Route::get('/api/products', [ProductController::class, 'apiIndex']);
+Route::post('/api/reviews', [ReviewController::class, 'apiStore'])->middleware('auth:api');
 
 require __DIR__ . '/auth.php';

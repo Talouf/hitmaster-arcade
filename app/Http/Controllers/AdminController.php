@@ -13,26 +13,7 @@ class AdminController extends Controller
 {
     public function dashboard()
     {
-        // Sales statistics by day, month, and year
-        $dailySales = Order::whereDate('created_at', now())->count();
-        $monthlySales = Order::whereMonth('created_at', now()->month)->count();
-        $yearlySales = Order::whereYear('created_at', now()->year)->count();
-
-        // Best-selling product
-        $bestProduct = Product::withCount('orders')
-            ->orderBy('orders_count', 'desc')
-            ->first();
-
-        // Top customer based on number of orders
-        $topCustomer = User::withCount('orders')
-            ->orderBy('orders_count', 'desc')
-            ->first();
-
-        $orders = Order::all();
-        $news = News::all();
-        $products = Product::all();
-
-        return view('admin.dashboard', compact('dailySales', 'monthlySales', 'yearlySales', 'bestProduct', 'topCustomer', 'orders', 'news', 'products'));
+        return app(AdminDashboardController::class)->index();
     }
 
     // News management methods (unchanged)
@@ -62,7 +43,6 @@ class AdminController extends Controller
 
         return redirect()->route('news.index')->with('success', 'News created successfully.');
     }
-
 
     public function deleteNews($id)
     {
@@ -99,12 +79,11 @@ class AdminController extends Controller
             'description' => $request->description,
             'price' => $request->price,
             'image' => $imageName,  // Storing the image path in the product
+            'stock_quantity' => $request->stock_quantity,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
-
-
 
     public function deleteProduct($id)
     {
@@ -155,6 +134,7 @@ class AdminController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'required',
             'price' => 'required|numeric',
+            'stock_quantity' => 'required|integer|min:0',
             'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
@@ -162,6 +142,7 @@ class AdminController extends Controller
         $product->name = $request->name;
         $product->description = $request->description;
         $product->price = $request->price;
+        $product->stock_quantity = $request->stock_quantity;
 
         if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->image->extension();
