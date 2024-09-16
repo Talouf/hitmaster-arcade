@@ -143,4 +143,31 @@ class CheckoutController extends Controller
     {
         return view('checkout.error')->with('error', session('error'));
     }
+
+// Method to update the status of an order
+public function updateOrderStatus($orderId, $status)
+{
+    $order = Order::findOrFail($orderId);
+    $order->status = $status;
+    $order->save();
+
+    return redirect()->route('orders.show', $orderId)->with('success', 'Order status updated.');
+}
+
+// Method for users to view their orders
+public function userOrders()
+{
+    $userId = auth()->user()->id;
+    $orders = Order::where('user_id', $userId)->get();
+
+    return view('orders.index', compact('orders'));
+}
+
+// Method for users to view the details of a specific order
+public function showOrder($id)
+{
+    $order = Order::with('orderItems')->findOrFail($id);
+
+    return view('orders.show', compact('order'));
+}
 }

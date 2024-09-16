@@ -19,7 +19,7 @@ class ReviewController extends Controller
     $user = auth()->user();
     $productId = $request->input('product_id');
 
-    // Check if the user has ordered the product
+    // Vérifier si l'utilisateur a commandé le produit
     $hasOrdered = Order::where('user_id', $user->id)
         ->whereHas('orderItems', function ($query) use ($productId) {
             $query->where('product_id', $productId);
@@ -27,18 +27,19 @@ class ReviewController extends Controller
         ->exists();
 
     if (!$hasOrdered) {
-        return redirect()->route('product.show', $productId)->with('error', 'You can only review products you have ordered.');
+        return response()->json(['error' => 'Vous devez acheter ce produit avant de laisser un avis.'], 403);
     }
 
-    // Check if the user has already reviewed the product
+    // Vérifier si l'utilisateur a déjà laissé un avis
     $hasReviewed = Review::where('user_id', $user->id)
         ->where('product_id', $productId)
         ->exists();
 
     if ($hasReviewed) {
-        return redirect()->route('product.show', $productId)->with('error', 'You have already reviewed this product.');
+        return response()->json(['error' => 'Vous avez déjà laissé un avis sur ce produit.'], 403);
     }
 
+    // Ajouter l'avis
     $review = new Review();
     $review->product_id = $productId;
     $review->user_id = $user->id;
@@ -46,6 +47,7 @@ class ReviewController extends Controller
     $review->content = $request->input('content');
     $review->save();
 
-    return redirect()->route('product.show', $productId)->with('success', 'Review added successfully.');
+    return response()->json(['message' => 'Avis ajouté avec succès'], 200);
 }
+
 }

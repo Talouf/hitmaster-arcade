@@ -6,11 +6,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Product extends Model
 {
     use HasFactory;
-
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'name', 'description', 'price', 'image',
     ];
@@ -19,11 +20,9 @@ class Product extends Model
     {
         return $this->hasMany(Review::class);
     }
-    public function home()
+
+public function orders()
 {
-    $latestProducts = Product::latest()->take(2)->get();
-    return view('home', compact('latestProducts'));
+    return $this->belongsToMany(Order::class, 'order_items', 'product_id', 'order_id');
 }
 }
-
-

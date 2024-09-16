@@ -57,6 +57,12 @@ Route::prefix('admin')->group(function () {
         Route::get('/products/create', [AdminController::class, 'createProduct'])->name('admin.products.create');
         Route::post('/products', [AdminController::class, 'storeProduct'])->name('admin.products.store');
         Route::delete('/products/{id}', [AdminController::class, 'deleteProduct'])->name('admin.products.delete');
+        Route::get('/admin/news/{id}/edit', [AdminController::class, 'editNews'])->name('admin.news.edit');
+        Route::put('/admin/news/{id}', [AdminController::class, 'updateNews'])->name('admin.news.update');
+        Route::get('/admin/products/{id}/edit', [AdminController::class, 'editProduct'])->name('admin.products.edit');
+        Route::put('/admin/products/{id}', [AdminController::class, 'updateProduct'])->name('admin.products.update');
+        Route::put('/admin/orders/{id}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.orders.updateStatus');
+        Route::get('/admin/orders/{id}', [AdminController::class, 'showOrder'])->name('admin.orders.show');
     });
 });
 

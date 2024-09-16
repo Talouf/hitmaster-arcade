@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container mx-auto py-8">
-    <h1 class="text-4xl font-bold text-center mb-8">Edit Profile</h1>
+    <h1 class="text-4xl font-bold text-center mb-8">Profil Utilisateur</h1>
     @if (session('status'))
         <div class="bg-green-500 text-white p-4 rounded mb-4 text-center">
             {{ session('status') }}
@@ -18,8 +18,7 @@
     <div class="tabs flex justify-center mb-8">
         <button class="tab-button bg-red-500 text-white px-4 py-2 rounded mr-2"
             onclick="showTab('profile')">Profile</button>
-        <button class="tab-button bg-red-500 text-white px-4 py-2 rounded" onclick="showTab('shipping')">Shipping
-            Information</button>
+        <button class="tab-button bg-red-500 text-white px-4 py-2 rounded" onclick="showTab('shipping')">Informations de livraison</button>
     </div>
 
     <!-- Profile Tab -->
@@ -29,7 +28,7 @@
             @method('PATCH')
 
             <div class="mb-4">
-                <label for="name" class="block text-white font-semibold">Name</label>
+                <label for="name" class="block text-white font-semibold">Nom de famille</label>
                 <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}"
                     class="w-full p-2 border border-gray-300 rounded">
                 @error('name')
@@ -38,7 +37,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="surname" class="block text-white font-semibold">Surname</label>
+                <label for="surname" class="block text-white font-semibold">Prénom</label>
                 <input type="text" name="surname" id="surname" value="{{ old('surname', $user->surname) }}"
                     class="w-full p-2 border border-gray-300 rounded">
                 @error('surname')
@@ -56,7 +55,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="old_password" class="block text-white font-semibold">Old Password</label>
+                <label for="old_password" class="block text-white font-semibold">Ancien mot de passe</label>
                 <input type="password" name="old_password" id="old_password"
                     class="w-full p-2 border border-gray-300 rounded">
                 @error('old_password')
@@ -65,7 +64,7 @@
             </div>
 
             <div class="mb-4">
-                <label for="password" class="block text-white font-semibold">New Password</label>
+                <label for="password" class="block text-white font-semibold">Nouveau mot de passe</label>
                 <input type="password" name="password" id="password" class="w-full p-2 border border-gray-300 rounded">
                 @error('password')
                     <span class="text-red-500">{{ $message }}</span>
@@ -73,20 +72,20 @@
             </div>
 
             <div class="mb-4">
-                <label for="password_confirmation" class="block text-white font-semibold">Confirm New Password</label>
+                <label for="password_confirmation" class="block text-white font-semibold">Confirmez le nouveau mot de passe</label>
                 <input type="password" name="password_confirmation" id="password_confirmation"
                     class="w-full p-2 border border-gray-300 rounded">
             </div>
 
             <div class="mb-4 text-center">
-                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Update Profile</button>
+                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Mettre à jour</button>
             </div>
         </form>
     </div>
 
     <!-- Shipping Information Tab -->
     <div id="shipping" class="tab-content" style="display: none;">
-        <h2 class="text-2xl font-bold text-center mb-8">Shipping Information</h2>
+        <h2 class="text-2xl font-bold text-center mb-8">Informations de livraison</h2>
         @if($shippingInfos && count($shippingInfos) > 0)
             <table class="min-w-full rounded shadow-lg text-center">
                 <thead>
@@ -113,10 +112,10 @@
                 </tbody>
             </table>
         @else
-            <p class="text-center text-white">No shipping information available.</p>
+            <p class="text-center text-white">Aucun moyen de livraison indiqué</p>
         @endif
         <div class="text-center mt-4">
-            <a href="{{ route('profile.add-shipping-info') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Add Shipping Address</a>
+            <a href="{{ route('profile.add-shipping-info') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Ajouter un moyen de livraison</a>
         </div>
     </div>
 </div>

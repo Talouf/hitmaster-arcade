@@ -5,7 +5,6 @@
 @section('title', 'Shopping Cart')
 
 @section('content')
-
 <div class="container mx-auto px-4">
     <h1 class="text-2xl font-bold mb-4 text-center">Panier</h1>
     <div class="text-center">

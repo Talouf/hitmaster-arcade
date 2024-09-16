@@ -7,6 +7,7 @@ use App\Models\OrderItem;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Product;
+use App\Models\Order;
 
 class CartController extends Controller
 {
@@ -14,14 +15,18 @@ class CartController extends Controller
     {
         $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
         $cartItems = OrderItem::where('user_id', $userId)->where('is_ordered', false)->get();
+
+        // Assure-toi de calculer le nombre total de produits
         $totalProducts = $cartItems->sum('quantity');
+
         return view('cart.show', compact('cartItems', 'totalProducts'));
     }
 
     public function addToCart(Request $request, $productId)
     {
         $product = Product::findOrFail($productId);
-
+    
+        // Determine user ID or session-based cart ID
         if (Auth::check()) {
             $userId = Auth::id();
         } else {
@@ -30,12 +35,14 @@ class CartController extends Controller
             }
             $userId = Session::get('cart_id');
         }
-
+    
+        // Check if the product is already in the cart
         $orderItem = OrderItem::where('user_id', $userId)
             ->where('product_id', $productId)
             ->where('is_ordered', false)
             ->first();
-
+    
+        // Update quantity if exists, otherwise create a new item
         if ($orderItem) {
             $orderItem->quantity += 1;
             $orderItem->save();
@@ -48,26 +55,47 @@ class CartController extends Controller
                 'is_ordered' => false,
             ]);
         }
-
+    
         $cartCount = OrderItem::where('user_id', $userId)
             ->where('is_ordered', false)
             ->sum('quantity');
+    
+        // Correct use of totalProducts
         $totalProducts = OrderItem::where('user_id', $userId)
             ->where('is_ordered', false)
-            ->sum('quantity');
+            ->sum('quantity');  // Total number of products
+    
         $cartItems = OrderItem::where('user_id', $userId)
             ->where('is_ordered', false)
             ->get();
-
+    
+        // Return totalProducts in the response
         return response()->json([
             'success' => true,
             'message' => 'Added to cart successfully',
             'cartCount' => $cartCount,
-            'totalProducts' => $totalProducts,
-            'cartItems' => $cartItems
+            'totalProducts' => $totalProducts,  // Add this line to return the total products count
+            'cartItems' => $cartItems,
         ]);
     }
+    
 
+    // Link temporary cart to authenticated user
+    public function linkCartToUser()
+    {
+        if (Auth::check()) {
+            $userId = Auth::id();
+            $tempCartId = Session::get('cart_id');
+
+            // Update the orders linked to the temporary session cart ID
+            OrderItem::where('user_id', $tempCartId)->update(['user_id' => $userId]);
+
+            // Optionally, remove the cart_id from the session
+            Session::forget('cart_id');
+        }
+    }
+
+    // Reintroduced removeFromCart method
     public function removeFromCart(Request $request, $productId)
     {
         $quantityToRemove = $request->input('quantity', 1);
@@ -115,6 +143,7 @@ class CartController extends Controller
         ]);
     }
 
+    // Reintroduced getCartCount method
     public function getCartCount()
     {
         if (Auth::check()) {
