@@ -4,7 +4,7 @@ namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
-use App\Models\Order; // Import the Order model
+use App\Models\Order;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -15,19 +15,11 @@ use Illuminate\View\View;
 
 class RegisteredUserController extends Controller
 {
-    /**
-     * Display the registration view.
-     */
     public function create(): View
     {
         return view('auth.register');
     }
 
-    /**
-     * Handle an incoming registration request.
-     *
-     * @throws \Illuminate\Validation\ValidationException
-     */
     public function store(Request $request): RedirectResponse
     {
         $request->validate([
@@ -47,12 +39,12 @@ class RegisteredUserController extends Controller
         Auth::login($user);
 
         // Link existing orders to the newly created user
-        Order::where('email', $user->email)
+        Order::where('guest_email', $user->email)
             ->whereNull('user_id')
-            ->update(['user_id' => $user->id]);
-
-        // Remove email from orders to avoid redundancy
-        Order::where('email', $user->email)->update(['email' => null]);
+            ->update([
+                'user_id' => $user->id,
+                'guest_email' => null
+            ]);
 
         return redirect(route('home', absolute: false));
     }

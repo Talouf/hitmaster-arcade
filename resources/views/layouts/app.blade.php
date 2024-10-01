@@ -24,7 +24,7 @@
             font-family: 'Montserrat', sans-serif;
         }
     </style>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/navigation.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/navigation.js', 'resources/js/cart.js', 'resources/js/utils.js'])
 </head>
 
 <body class="bg-gray-900 text-white">

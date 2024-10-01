@@ -10,23 +10,21 @@ class OrderItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id', 'product_id', 'quantity', 'price', 'is_ordered', 'order_id',
+        'order_id', 
+        'cart_id',  // Add this for session cart tracking
+        'product_id', 
+        'quantity', 
+        'price', 
+        'is_ordered'
     ];
 
-    public function user()
+    public function order()
     {
-        return $this->belongsTo(User::class);
+        return $this->belongsTo(Order::class, 'order_id');
     }
 
     public function product()
     {
         return $this->belongsTo(Product::class);
     }
-
-    public function order()
-    {
-        return $this->belongsTo(Order::class);
-    }
 }
-
-

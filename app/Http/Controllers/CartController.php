@@ -12,140 +12,129 @@ use App\Models\Order;
 class CartController extends Controller
 {
     public function showCart()
-    {
-        $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
-        $cartItems = OrderItem::where('user_id', $userId)->where('is_ordered', false)->get();
+{
+    $cartId = Session::get('cart_id');  // Use session-based cart ID
+    
+    $cartItems = OrderItem::with('product') // Eager load product
+        ->where('order_id', $cartId)
+        ->where('is_ordered', false)
+        ->get();
 
-        // Assure-toi de calculer le nombre total de produits
-        $totalProducts = $cartItems->sum('quantity');
+    $totalProducts = $cartItems->sum('quantity');
 
+    return view('cart.show', compact('cartItems', 'totalProducts'));
+}
 
-        return view('cart.show', compact('cartItems', 'totalProducts'));
-    }
 
     public function addToCart(Request $request, $productId)
     {
         $product = Product::findOrFail($productId);
-    
-        // Determine user ID or session-based cart ID
-        if (Auth::check()) {
-            $userId = Auth::id();
-        } else {
-            if (!Session::has('cart_id')) {
-                Session::put('cart_id', uniqid());
-            }
-            $userId = Session::get('cart_id');
+
+        // Check if cart_id exists in session, otherwise create a new one
+        if (!Session::has('cart_id')) {
+            Session::put('cart_id', uniqid()); // Generate a unique session-based cart ID
         }
-    
-        // Check if the product is already in the cart
-        $orderItem = OrderItem::where('user_id', $userId)
+        $cartId = Session::get('cart_id');
+
+        // Check if the product already exists in the cart
+        $orderItem = OrderItem::where('order_id', $cartId)
             ->where('product_id', $productId)
             ->where('is_ordered', false)
             ->first();
-    
-        // Update quantity if exists, otherwise create a new item
+
         if ($orderItem) {
-            $orderItem->quantity += 1;
+            $orderItem->quantity += 1; // Increment the quantity if the product is already in the cart
             $orderItem->save();
         } else {
+            // Create a new OrderItem for the product
             OrderItem::create([
-                'user_id' => $userId,
+                'order_id' => $cartId,
                 'product_id' => $productId,
                 'quantity' => 1,
                 'price' => $product->price,
-                'is_ordered' => false,
+                'is_ordered' => false,  // Product is not yet part of a completed order
             ]);
         }
-    
-        $cartCount = OrderItem::where('user_id', $userId)
+
+        // Count the total quantity of items in the cart
+        $cartCount = OrderItem::where('order_id', $cartId)
             ->where('is_ordered', false)
             ->sum('quantity');
-    
-        // Correct use of totalProducts
-        $totalProducts = OrderItem::where('user_id', $userId)
-            ->where('is_ordered', false)
-            ->sum('quantity');  // Total number of products
-    
-        $cartItems = OrderItem::where('user_id', $userId)
+
+        $cartItems = OrderItem::where('order_id', $cartId)
             ->where('is_ordered', false)
             ->get();
-    
-        // Return totalProducts in the response
+
         return response()->json([
             'success' => true,
             'message' => 'Added to cart successfully',
             'cartCount' => $cartCount,
-            'totalProducts' => $totalProducts,  // Add this line to return the total products count
             'cartItems' => $cartItems,
         ]);
     }
-    
 
-    // Link temporary cart to authenticated user
+    // Method to link temporary session cart to authenticated user
     public function linkCartToUser()
     {
         if (Auth::check()) {
             $userId = Auth::id();
             $tempCartId = Session::get('cart_id');
 
-            // Update the orders linked to the temporary session cart ID
-            OrderItem::where('user_id', $tempCartId)->update(['user_id' => $userId]);
+            // Update the order items with the session cart ID to link them to the user
+            OrderItem::where('order_id', $tempCartId)
+                ->update(['order_id' => $userId]);
 
-            // Optionally, remove the cart_id from the session
+            // Optionally remove the cart_id from the session
             Session::forget('cart_id');
         }
     }
 
-    // Reintroduced removeFromCart method
     public function removeFromCart(Request $request, $productId)
     {
         $quantityToRemove = $request->input('quantity', 1);
+        $cartId = Session::get('cart_id');
 
-        $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
-
-        $orderItem = OrderItem::where('user_id', $userId)
+        $orderItem = OrderItem::where('order_id', $cartId)
             ->where('product_id', $productId)
             ->where('is_ordered', false)
             ->first();
+
+        $remainingQuantity = 0;
 
         if ($orderItem) {
             if ($orderItem->quantity > $quantityToRemove) {
                 $orderItem->quantity -= $quantityToRemove;
                 $orderItem->save();
+                $remainingQuantity = $orderItem->quantity;
             } else {
                 $orderItem->delete();
             }
-
-            $product = Product::find($productId);
-            $product->increment('stock_quantity', $quantityToRemove);
         }
 
-        $remainingQuantity = $orderItem ? $orderItem->quantity : 0;
-        $cartCount = OrderItem::where('user_id', $userId)
-            ->where('is_ordered', false)
-            ->sum('quantity');
-        $totalProducts = OrderItem::where('user_id', $userId)
-            ->where('is_ordered', false)
-            ->sum('quantity');
-        $cartItems = OrderItem::where('user_id', $userId)
+        $cartItems = OrderItem::where('order_id', $cartId)
             ->where('is_ordered', false)
             ->get();
+
+        $cartCount = $cartItems->sum('quantity');
+        $cartTotal = $cartItems->sum(function ($item) {
+            return $item->quantity * $item->price;
+        });
 
         return response()->json([
             'success' => true,
             'remainingQuantity' => $remainingQuantity,
             'cartCount' => $cartCount,
-            'totalProducts' => $totalProducts,
-            'cartItems' => $cartItems
+            'cartItems' => $cartItems,
+            'cartTotal' => $cartTotal
         ]);
     }
 
-    // Reintroduced getCartCount method
+    // Method to get the current cart count
     public function getCartCount()
     {
-        $userId = Auth::check() ? Auth::id() : Session::get('cart_id');
+        $cartId = Session::get('cart_id');
 
-        $cartCount = OrderItem::where('user_id', $userId)
+        $cartCount = OrderItem::where('order_id', $cartId)
             ->where('is_ordered', false)
             ->sum('quantity');
 

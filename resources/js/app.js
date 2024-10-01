@@ -1,9 +1,9 @@
 import './bootstrap';
-
 import Alpine from 'alpinejs';
+import './navigation';
+import './cart';
 
 window.Alpine = Alpine;
-
 Alpine.start();
 
 window.addEventListener('pageshow', function(event) {
@@ -11,4 +11,3 @@ window.addEventListener('pageshow', function(event) {
         window.location.reload(); // Force la page à se recharger si elle provient du cache
     }
 });
-

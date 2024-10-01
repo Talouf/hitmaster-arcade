@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Requests\ShippingInfoRequest;
 use App\Models\ShippingInfo;
+use App\Models\Order;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use App\Models\User;
@@ -21,7 +22,33 @@ class ProfileController extends Controller
 
         return view('profile.edit', compact('user', 'shippingInfos'));
     }
+    public function register(Request $request)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'surname' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
 
+        $user = User::create([
+            'name' => $request->name,
+            'surname' => $request->surname,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        // Associate any existing guest orders with the new user account
+        Order::where('guest_email', $request->email)
+            ->update([
+                'user_id' => $user->id,
+                'guest_email' => null
+            ]);
+
+        Auth::login($user);
+
+        return redirect()->route('profile.edit')->with('status', 'Account created successfully.');
+    }
     public function update(Request $request)
     {
         $request->validate([

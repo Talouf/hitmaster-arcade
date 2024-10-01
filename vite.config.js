@@ -7,6 +7,9 @@ export default defineConfig({
             input: [
                 'resources/css/app.css',
                 'resources/js/app.js',
+                'resources/js/navigation.js',
+                'resources/js/cart.js',
+                'resources/js/utils.js',
             ],
             refresh: true,
         }),

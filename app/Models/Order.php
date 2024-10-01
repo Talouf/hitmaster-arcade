@@ -5,6 +5,9 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Session;
+use Illuminate\Support\Facades\DB;
 
 class Order extends Model
 {
@@ -12,10 +15,14 @@ class Order extends Model
 
     protected $fillable = [
         'user_id',
-        'email',
+        'guest_email',
         'order_date',
         'total_price',
         'status',
+    ];
+
+    protected $casts = [
+        'order_date' => 'datetime',
     ];
 
     public function orderItems()
@@ -23,42 +30,49 @@ class Order extends Model
         return $this->hasMany(OrderItem::class);
     }
 
-    public function placeOrder(Request $request)
-    {
-        $user = auth()->user();
-
-        // Create a new order
-        $order = new Order();
-        $order->user_id = $user ? $user->id : null;
-        $order->email = $user ? null : $request->email; // Use email for guest orders
-        $order->order_date = now();
-        $order->total_price = $this->calculateTotalPrice($user ? $user->id : $request->session()->getId());
-        $order->status = 'pending'; // Set initial status
-        $order->save();
-
-        // Log the order creation
-        \Log::info('Order created', ['order_id' => $order->id]);
-
-        // Update order items to link them to the new order
-        $updated = OrderItem::where('user_id', $user ? $user->id : $request->session()->getId())
-            ->where('is_ordered', false)
-            ->update(['order_id' => $order->id, 'is_ordered' => true]);
-
-        // Log the update result
-        \Log::info('Order items updated', ['updated' => $updated]);
-
-        // Additional logic for order placement (e.g., sending confirmation email)
-
-        return redirect()->route('order.success')->with('success', 'Order placed successfully.');
-    }
-
-    // Implement this method to calculate the total price
-    private function calculateTotalPrice($userId)
-    {
-        // Your logic to calculate total price
-    }
     public function user()
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function placeOrder(Request $request)
+    {
+        $user = Auth::user();
+        $userId = $user ? $user->id : null;
+        $guestEmail = !$user ? $request->email : null;
+
+        $this->user_id = $userId;
+        $this->guest_email = $guestEmail;
+        $this->order_date = now();
+        $this->total_price = $this->calculateTotalPrice($userId, $guestEmail);
+        $this->status = 'pending';
+        $this->save();
+
+        $orderItems = OrderItem::where(function ($query) use ($userId, $guestEmail) {
+            $query->where('user_id', $userId)
+                  ->orWhere('guest_email', $guestEmail);
+        })->where('is_ordered', false)->get();
+
+        foreach ($orderItems as $item) {
+            $item->order_id = $this->id;
+            $item->is_ordered = true;
+            $item->save();
+        }
+
+        return $this;
+    }
+
+    private function calculateTotalPrice($userId, $guestEmail)
+    {
+        return OrderItem::where(function ($query) use ($userId, $guestEmail) {
+            $query->where('user_id', $userId)
+                  ->orWhere('guest_email', $guestEmail);
+        })->where('is_ordered', false)
+          ->sum(DB::raw('quantity * price'));
+    }
+
+    public function getEmailAttribute()
+    {
+        return $this->user ? $this->user->email : $this->guest_email;
     }
 }

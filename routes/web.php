@@ -17,6 +17,8 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\CheckoutController;
 use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\LegalController;
+use App\Http\Controllers\OrderController;
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -36,7 +38,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/profile/orders', [ProfileController::class, 'orders'])->name('profile.orders');
+    Route::get('/profile/orders', [OrderController::class, 'userOrders'])->name('profile.orders');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}/invoice', [OrderController::class, 'downloadInvoice'])->name('orders.invoice');
 });
 
 // Routes for administrators
@@ -93,6 +97,6 @@ Route::post('/profile/store-shipping-info', [ProfileController::class, 'storeShi
 
 Route::post('/reviews/store', [ReviewController::class, 'store'])->name('reviews.store');
 
-
+Route::get('/legal-mentions', [LegalController::class, 'index'])->name('legal.mentions');
 
 require __DIR__ . '/auth.php';

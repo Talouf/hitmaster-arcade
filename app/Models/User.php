@@ -34,4 +34,15 @@ class User extends Authenticatable
     {
         return $this->hasMany(Order::class);
     }
+    public function transferGuestOrders()
+{
+    $guestOrders = Order::where('guest_email', $this->email)->whereNull('user_id')->get();
+    
+    foreach ($guestOrders as $order) {
+        $order->update([
+            'user_id' => $this->id,
+            'guest_email' => null
+        ]);
+    }
+}
 }
