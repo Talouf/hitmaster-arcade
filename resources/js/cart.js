@@ -29,12 +29,14 @@ window.addToCart = function (productId) {
     .then(response => response.json())
     .then(data => {
         if (data.success) {
-            showNotification(data.message, 'success');
+            showNotification('Ajouté au panier', 'success'); // notification
+            updateCartDisplay(productId, data.updatedQuantity);
             updateCartCount(data.cartCount);
             updateTotalProducts(data.totalProducts);
             updateDropdownCart(data.cartItems);
+            updateCartTotal(data.cartTotal);
         } else {
-            showNotification('Failed to add to cart', 'error');
+            showNotification('Échec de l\'ajout au panier', 'error'); // error message
         }
     })
     .catch(error => console.error('Error:', error));
@@ -42,7 +44,7 @@ window.addToCart = function (productId) {
 
 window.removeFromCart = function (productId) {
     const quantityDropdown = document.getElementById(`quantity-${productId}`);
-    const quantityToRemove = quantityDropdown ? parseInt(quantityDropdown.value) : 1; // Get the selected quantity
+    const quantityToRemove = quantityDropdown ? parseInt(quantityDropdown.value) : 1;
     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
     fetch(`/cart/remove/${productId}`, {
@@ -51,11 +53,12 @@ window.removeFromCart = function (productId) {
             'X-CSRF-TOKEN': token,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ quantity: quantityToRemove }) // Send the selected quantity to the server
+        body: JSON.stringify({ quantity: quantityToRemove })
     })
     .then(response => response.json())
     .then(data => {
         if (data.success) {
+            showNotification('Retiré du panier', 'error'); // notification
             updateCartDisplay(productId, data.remainingQuantity);
             updateCartCount(data.cartCount);
             updateTotalProducts(data.totalProducts);
@@ -63,7 +66,7 @@ window.removeFromCart = function (productId) {
             updateCartTotal(data.cartTotal);
             checkEmptyCart(data.cartCount);
         } else {
-            showNotification('Failed to remove from cart', 'error');
+            showNotification('Échec du retrait du panier', 'error'); // error message
         }
     })
     .catch(error => console.error('Error:', error));
@@ -74,13 +77,13 @@ function fetchCartCount() {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' }
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            updateCartCount(data.cartCount);
-        }
-    })
-    .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                updateCartCount(data.cartCount);
+            }
+        })
+        .catch(error => console.error('Error:', error));
 }
 
 function updateCartCount(count) {
@@ -93,7 +96,7 @@ function updateCartCount(count) {
 function updateTotalProducts(totalProducts) {
     const totalProductsElement = document.getElementById('total-products');
     if (totalProductsElement) {
-        totalProductsElement.innerText = totalProducts;
+        totalProductsElement.textContent = totalProducts;
     }
 }
 
@@ -130,8 +133,20 @@ function updateCartDisplay(productId, newQuantity) {
 
         if (quantityCell) quantityCell.textContent = newQuantity;
         if (priceCell && totalCell) {
-            const price = parseFloat(priceCell.textContent);
+            const price = parseFloat(priceCell.textContent.replace(',', ''));
             totalCell.textContent = (newQuantity * price).toFixed(2);
+        }
+
+        // Update the quantity dropdown
+        const quantityDropdown = cartItemRow.querySelector('select');
+        if (quantityDropdown) {
+            quantityDropdown.innerHTML = '';
+            for (let i = 1; i <= newQuantity; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                quantityDropdown.appendChild(option);
+            }
         }
     } else {
         cartItemRow.remove();
@@ -152,17 +167,20 @@ function updateTotalProductsFromDOM() {
         quantityElements.forEach(quantityElement => {
             const quantity = parseInt(quantityElement.textContent);
             const cartItemRow = quantityElement.closest('tr');
-            const priceCell = cartItemRow.querySelector('td:nth-child(3)');
-            const price = parseFloat(priceCell.textContent);
+            const priceCell = cartItemRow ? cartItemRow.querySelector('td:nth-child(3)') : null;
 
-            newTotalProducts += quantity;
-            newCartTotal += quantity * price;
+            if (!isNaN(quantity) && priceCell) {
+                const price = parseFloat(priceCell.textContent);
+                newTotalProducts += quantity;
+                newCartTotal += quantity * price;
+            }
         });
 
         totalProductsElement.textContent = newTotalProducts;
         cartTotalElement.textContent = newCartTotal.toFixed(2);
     }
 }
+
 
 function checkEmptyCart(cartCount) {
     if (Number(cartCount) === 0) {
@@ -187,10 +205,10 @@ function checkEmptyCart(cartCount) {
         }
     }
 }
-
 function updateCartTotal(total) {
     const cartTotalElement = document.getElementById('cart-total');
     if (cartTotalElement) {
-        cartTotalElement.textContent = total.toFixed(2);
+        // Ensure total is a number before using toFixed
+        cartTotalElement.textContent = parseFloat(total).toFixed(2);
     }
 }

@@ -8,6 +8,7 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use PDF;
 use Illuminate\Support\Facades\Auth;
 
+
 class OrderController extends Controller
 {
     use AuthorizesRequests;
@@ -22,7 +23,7 @@ class OrderController extends Controller
     {
         $this->authorize('view', $order);
         
-        $pdf = PDF::loadView('orders.invoice', compact('order'));
+        $pdf = PDF::loadView('pdf.invoice', compact('order'));
         return $pdf->download('invoice-' . $order->id . '.pdf');
     }
 

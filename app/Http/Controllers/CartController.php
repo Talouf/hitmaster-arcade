@@ -12,64 +12,64 @@ use App\Models\Order;
 class CartController extends Controller
 {
     public function showCart()
-{
-    $cartId = Session::get('cart_id');  // Use session-based cart ID
-    
-    $cartItems = OrderItem::with('product') // Eager load product
-        ->where('order_id', $cartId)
-        ->where('is_ordered', false)
-        ->get();
+    {
+        $cartId = Session::get('cart_id');  // Use session-based cart ID
 
-    $totalProducts = $cartItems->sum('quantity');
+        $cartItems = OrderItem::with('product') // Eager load product
+            ->where('order_id', $cartId)
+            ->where('is_ordered', false)
+            ->get();
 
-    return view('cart.show', compact('cartItems', 'totalProducts'));
-}
+        $totalProducts = $cartItems->sum('quantity');
+
+        return view('cart.show', compact('cartItems', 'totalProducts'));
+    }
 
 
     public function addToCart(Request $request, $productId)
     {
         $product = Product::findOrFail($productId);
 
-        // Check if cart_id exists in session, otherwise create a new one
         if (!Session::has('cart_id')) {
-            Session::put('cart_id', uniqid()); // Generate a unique session-based cart ID
+            Session::put('cart_id', uniqid());
         }
         $cartId = Session::get('cart_id');
 
-        // Check if the product already exists in the cart
         $orderItem = OrderItem::where('order_id', $cartId)
             ->where('product_id', $productId)
             ->where('is_ordered', false)
             ->first();
 
         if ($orderItem) {
-            $orderItem->quantity += 1; // Increment the quantity if the product is already in the cart
+            $orderItem->quantity += 1;
             $orderItem->save();
         } else {
-            // Create a new OrderItem for the product
             OrderItem::create([
                 'order_id' => $cartId,
                 'product_id' => $productId,
                 'quantity' => 1,
                 'price' => $product->price,
-                'is_ordered' => false,  // Product is not yet part of a completed order
+                'is_ordered' => false,
             ]);
         }
-
-        // Count the total quantity of items in the cart
-        $cartCount = OrderItem::where('order_id', $cartId)
-            ->where('is_ordered', false)
-            ->sum('quantity');
 
         $cartItems = OrderItem::where('order_id', $cartId)
             ->where('is_ordered', false)
             ->get();
 
+        $cartCount = $cartItems->sum('quantity');
+        $cartTotal = $cartItems->sum(function ($item) {
+            return $item->quantity * $item->price;
+        });
+
         return response()->json([
             'success' => true,
             'message' => 'Added to cart successfully',
             'cartCount' => $cartCount,
+            'totalProducts' => $cartCount,
             'cartItems' => $cartItems,
+            'cartTotal' => number_format($cartTotal, 2, '.', ''),
+            'updatedQuantity' => $orderItem ? $orderItem->quantity : 1
         ]);
     }
 
@@ -124,6 +124,7 @@ class CartController extends Controller
             'success' => true,
             'remainingQuantity' => $remainingQuantity,
             'cartCount' => $cartCount,
+            'totalProducts' => $cartCount,
             'cartItems' => $cartItems,
             'cartTotal' => $cartTotal
         ]);
