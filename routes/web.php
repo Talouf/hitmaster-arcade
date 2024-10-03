@@ -17,11 +17,12 @@ use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\OrderController;
-use App\Http\Controllers\Admin\AdminDashboardController;
+use App\Http\Controllers\AdminDashboardController;
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
+Route::get('/mentions', [LegalController::class, 'index'])->name('mentions');
 Route::resource('products', ProductController::class);
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
@@ -92,6 +93,8 @@ Route::post('/profile/store-shipping-info', [ProfileController::class, 'storeShi
 
 Route::post('/reviews/store', [ReviewController::class, 'store'])->name('reviews.store');
 
-Route::get('/legal-mentions', [LegalController::class, 'index'])->name('legal.mentions');
+
+
+Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 
 require __DIR__ . '/auth.php';

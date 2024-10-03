@@ -128,21 +128,21 @@
         </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <div class="bg-white shadow rounded-lg p-4">
+        <div class="bshadow rounded-lg p-4">
             <h5 class="font-bold text-xl mb-2">Daily Sales</h5>
             <p class="text-3xl">${{number_format($dailySales, 2) }}</p>
         </div>
-        <div class="bg-white shadow rounded-lg p-4">
+        <div class="shadow rounded-lg p-4">
             <h5 class="font-bold text-xl mb-2">Monthly Sales</h5>
             <p class="text-3xl">${{ number_format($monthlySales, 2) }}</p>
         </div>
-        <div class="bg-white shadow rounded-lg p-4">
+        <div class="shadow rounded-lg p-4">
             <h5 class="font-bold text-xl mb-2">Yearly Sales</h5>
             <p class="text-3xl">${{ number_format($yearlySales, 2) }}</p>
         </div>
     </div>
     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
-        <div class="bg-white shadow rounded-lg p-4">
+        <div class="shadow rounded-lg p-4">
             <h5 class="font-bold text-xl mb-2">Best Selling Product</h5>
             @if($bestSellingProduct)
                 <p>{{ $bestSellingProduct->name }} ({{ $bestSellingProduct->order_items_count }} sold)</p>
@@ -150,7 +150,7 @@
                 <p>No data available</p>
             @endif
         </div>
-        <div class="bg-white shadow rounded-lg p-4">
+        <div class="shadow rounded-lg p-4">
             <h5 class="font-bold text-xl mb-2">Top Customer</h5>
             @if($topCustomer)
                 <p>{{ $topCustomer->name }} ({{ $topCustomer->orders_count }} orders)</p>

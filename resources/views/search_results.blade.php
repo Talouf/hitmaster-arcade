@@ -1,44 +1,45 @@
 @extends('layouts.app')
 
 @section('content')
-    <div class="container">
-        <h1>Résultats de recherche pour : "{{ $query }}"</h1>
+<div class="container mx-auto px-4 py-8">
+    <h1 class="text-2xl font-bold mb-4 text-white">Résultats de recherche pour : "{{ $query }}"</h1>
 
-        <h2>Produits</h2>
-        <div class="row">
-            @forelse($products as $product)
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <img src="{{ asset($product->image) }}" class="card-img-top" alt="{{ $product->name }}">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $product->name }}</h5>
-                            <p class="card-text">{{ $product->description }}</p>
-                            <p class="card-text"><strong>{{ $product->price }}€</strong></p>
-                            <a href="{{ route('product.show', $product->id) }}" class="btn btn-primary">Voir le produit</a>
+    <div class="mb-8">
+        <h2 class="text-xl font-semibold mb-4 text-red-500">Produits</h2>
+        @if($products->count() > 0)
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                @foreach($products as $product)
+                    <div class="bg-gray-800 rounded-lg shadow-lg overflow-hidden">
+                        <img src="{{ asset($product->image) }}" alt="{{ $product->name }}" class="w-full h-48 object-cover">
+                        <div class="p-4">
+                            <h3 class="text-lg font-semibold text-white mb-2">{{ $product->name }}</h3>
+                            <p class="text-gray-400 mb-2">{{ Str::limit($product->description, 100) }}</p>
+                            <p class="text-red-500 font-bold">{{ $product->price }}€</p>
+                            <a href="{{ route('products.show', $product->id) }}" class="mt-2 inline-block bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition">Voir le produit</a>
                         </div>
                     </div>
-                </div>
-            @empty
-                <p>Aucun produit trouvé.</p>
-            @endforelse
-        </div>
-
-        <h2>News</h2>
-        <div class="row">
-            @forelse($news as $newsItem)
-                <div class="col-md-4">
-                    <div class="card mb-4">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ $newsItem->title }}</h5>
-                            <p class="card-text">{{ $newsItem->post_date }}</p>
-                            <p class="card-text">{{ \Illuminate\Support\Str::limit($newsItem->content, 150) }}</p>
-                            <a href="{{ route('news.show', $newsItem->id) }}" class="btn btn-primary">Lire la suite</a>
-                        </div>
-                    </div>
-                </div>
-            @empty
-                <p>Aucune news trouvée.</p>
-            @endforelse
-        </div>
+                @endforeach
+            </div>
+        @else
+            <p class="text-gray-400">Aucun produit trouvé.</p>
+        @endif
     </div>
+
+    <div>
+        <h2 class="text-xl font-semibold mb-4 text-red-500">News</h2>
+        @if($news->count() > 0)
+            <div class="space-y-4">
+                @foreach($news as $newsItem)
+                    <div class="bg-gray-800 rounded-lg shadow-lg p-4">
+                        <h3 class="text-lg font-semibold text-white mb-2">{{ $newsItem->title }}</h3>
+                        <p class="text-gray-400 mb-2">{{ Str::limit($newsItem->content, 150) }}</p>
+                        <a href="{{ route('news.show', $newsItem->id) }}" class="text-red-500 hover:underline">Lire la suite</a>
+                    </div>
+                @endforeach
+            </div>
+        @else
+            <p class="text-gray-400">Aucune news trouvée.</p>
+        @endif
+    </div>
+</div>
 @endsection

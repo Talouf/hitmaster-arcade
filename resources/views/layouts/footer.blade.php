@@ -11,7 +11,7 @@
         <div class="mt-4 flex justify-center space-x-4">
             <a href="#" class="text-gray-400 hover:text-white">FAQ</a>
             <a href="{{ route('about') }}" class="text-gray-400 hover:text-white">À propos de nous</a>
-            <a href="#" class="text-gray-400 hover:text-white">Mentions Légales</a>
+            <a href="{{ route('mentions') }}" class="text-gray-400 hover:text-white">Mentions Légales</a>
         </div>
         <p class="mt-4 text-gray-400">2024, HitMaster Arcade</p>
     </div>
@@ -23,6 +23,7 @@
         flex-direction: column;
         min-height: 100vh;
     }
+
     main {
         flex: 1;
     }
