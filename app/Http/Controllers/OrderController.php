@@ -8,7 +8,6 @@ use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use PDF;
 use Illuminate\Support\Facades\Auth;
 
-
 class OrderController extends Controller
 {
     use AuthorizesRequests;
@@ -22,8 +21,12 @@ class OrderController extends Controller
     public function downloadInvoice(Order $order)
     {
         $this->authorize('view', $order);
-        
-        $pdf = PDF::loadView('pdf.invoice', compact('order'));
+
+        $logoPath = public_path('images/hitmaster.png');
+        $logoData = base64_encode(file_get_contents($logoPath));
+        $logoSrc = 'data:image/png;base64,' . $logoData;
+
+        $pdf = PDF::loadView('pdf.invoice', compact('order', 'logoSrc'));
         return $pdf->download('invoice-' . $order->id . '.pdf');
     }
 
@@ -47,5 +50,18 @@ class OrderController extends Controller
         } else {
             return back()->with('error', 'Failed to place order. Please try again.');
         }
+    }
+
+    // New method for admin to view order details
+    public function adminShow(Order $order)
+    {
+        $this->authorize('viewAny', Order::class);
+        return view('admin.orders.show', compact('order'));
+    }
+    public function adminIndex()
+    {
+        $this->authorize('viewAny', Order::class);
+        $orders = Order::with('user')->latest()->paginate(20);
+        return view('admin.orders.index', compact('orders'));
     }
 }

@@ -75,4 +75,5 @@ class Order extends Model
     {
         return $this->user ? $this->user->email : $this->guest_email;
     }
+ 
 }

@@ -10,4 +10,7 @@ class AuthServiceProvider extends ServiceProvider
     {
         $this->registerPolicies();
     }
+    protected $policies = [
+        Order::class => OrderPolicy::class,
+    ];
 }

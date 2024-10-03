@@ -18,7 +18,10 @@
     <div class="tabs flex justify-center mb-8">
         <button class="tab-button bg-red-500 text-white px-4 py-2 rounded mr-2"
             onclick="showTab('profile')">Profile</button>
-        <button class="tab-button bg-red-500 text-white px-4 py-2 rounded" onclick="showTab('shipping')">Informations de livraison</button>
+        <button class="tab-button bg-red-500 text-white px-4 py-2 rounded mr-2" 
+            onclick="showTab('shipping')">Informations de livraison</button>
+        <button class="tab-button bg-red-500 text-white px-4 py-2 rounded" 
+            onclick="showTab('orders')">Mes Commandes</button>
     </div>
 
     <!-- Profile Tab -->
@@ -117,6 +120,40 @@
         <div class="text-center mt-4">
             <a href="{{ route('profile.add-shipping-info') }}" class="bg-blue-500 text-white px-4 py-2 rounded">Ajouter un moyen de livraison</a>
         </div>
+    </div>
+
+    <!-- Orders Tab -->
+    <div id="orders" class="tab-content" style="display: none;">
+        <h2 class="text-2xl font-bold text-center mb-8">Mes Commandes</h2>
+        @if($orders && count($orders) > 0)
+            <table class="min-w-full rounded shadow-lg text-center">
+                <thead>
+                    <tr>
+                        <th class="py-2 px-4 text-white">Numéro de commande</th>
+                        <th class="py-2 px-4 text-white">Date</th>
+                        <th class="py-2 px-4 text-white">Total</th>
+                        <th class="py-2 px-4 text-white">Statut</th>
+                        <th class="py-2 px-4 text-white">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($orders as $order)
+                        <tr class="border-b border-gray-700">
+                            <td class="py-2 px-4 text-white">{{ $order->id }}</td>
+                            <td class="py-2 px-4 text-white">{{ $order->created_at->format('d/m/Y') }}</td>
+                            <td class="py-2 px-4 text-white">{{ number_format($order->total_price, 2) }} €</td>
+                            <td class="py-2 px-4 text-white">{{ ucfirst($order->status) }}</td>
+                            <td class="py-2 px-4 text-white">
+                                <a href="{{ route('orders.show', $order->id) }}" class="bg-blue-500 text-white px-2 py-1 rounded mr-2">Détails</a>
+                                <a href="{{ route('orders.invoice', $order->id) }}" class="bg-green-500 text-white px-2 py-1 rounded">Facture</a>
+                            </td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        @else
+            <p class="text-center text-white">Vous n'avez pas encore passé de commande.</p>
+        @endif
     </div>
 </div>
 

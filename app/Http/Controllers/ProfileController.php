@@ -15,12 +15,13 @@ use App\Models\User;
 
 class ProfileController extends Controller
 {
-    public function edit(): View
+    public function edit()
     {
         $user = Auth::user();
         $shippingInfos = $user->shippingInfos;
+        $orders = $user->orders()->latest()->get();  // Add this line
 
-        return view('profile.edit', compact('user', 'shippingInfos'));
+        return view('profile.edit', compact('user', 'shippingInfos', 'orders'));
     }
     public function register(Request $request)
     {

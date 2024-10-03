@@ -38,9 +38,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-    Route::get('/profile/orders', [OrderController::class, 'userOrders'])->name('profile.orders');
-    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
-    Route::get('/orders/{order}/invoice', [OrderController::class, 'downloadInvoice'])->name('orders.invoice');
 });
 
 // Routes for administrators
@@ -67,15 +64,19 @@ Route::prefix('admin')->group(function () {
         Route::put('/admin/products/{id}', [AdminController::class, 'updateProduct'])->name('admin.products.update');
         Route::put('/admin/orders/{id}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.orders.updateStatus');
         Route::get('/admin/orders/{id}', [AdminController::class, 'showOrder'])->name('admin.orders.show');
+        Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders.index');
     });
 });
 
-// Stripe payment routes
+// Stripe payment routes + orders routes
 Route::middleware(['auth'])->group(function () {
     Route::get('/checkout', [PaymentController::class, 'checkout'])->name('checkout');
     Route::post('/checkout', [PaymentController::class, 'processCheckout'])->name('checkout.process');
     Route::get('/payments/create', [PaymentController::class, 'create'])->name('payments.create');
     Route::post('/payments', [PaymentController::class, 'store'])->name('payments.store');
+    Route::get('/profile/orders', [OrderController::class, 'userOrders'])->name('profile.orders');
+    Route::get('/orders/{order}', [OrderController::class, 'show'])->name('orders.show');
+    Route::get('/orders/{order}/invoice', [OrderController::class, 'downloadInvoice'])->name('orders.invoice');
 });
 
 // Cart and checkout routes
