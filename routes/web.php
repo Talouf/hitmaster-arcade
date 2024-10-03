@@ -17,6 +17,7 @@ use App\Http\Controllers\WebhookController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\Admin\AdminDashboardController;
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
