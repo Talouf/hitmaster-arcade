@@ -74,16 +74,6 @@
                             <td class="py-2 px-4 border-b text-center">{{ $newsItem->id }}</td>
                             <td class="py-2 px-4 border-b text-center">{{ $newsItem->title }}</td>
                             <td class="py-2 px-4 border-b text-center">
-                                <form action="{{ route('admin.news.delete', $newsItem->id) }}" method="POST"
-                                    onsubmit="return confirm('Are you sure you want to delete this news item?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b text-center">
                                 <a href="{{ route('admin.news.edit', $newsItem->id) }}"
                                     class="bg-blue-500 text-white py-1 px-3 rounded mr-2">Edit</a>
                                 <form action="{{ route('admin.news.delete', $newsItem->id) }}" method="POST" class="inline"
@@ -121,16 +111,6 @@
                             <td class="py-2 px-4 border-b text-center">{{ $product->name }}</td>
                             <td class="py-2 px-4 border-b text-center">{{ $product->price }}</td>
                             <td class="py-2 px-4 border-b text-center">
-                                <form action="{{ route('admin.products.delete', $product->id) }}" method="POST"
-                                    onsubmit="return confirm('Are you sure you want to delete this product?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="bg-red-500 text-white py-1 px-3 rounded">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td class="py-2 px-4 border-b text-center">
                                 <a href="{{ route('admin.products.edit', $product->id) }}"
                                     class="bg-blue-500 text-white py-1 px-3 rounded mr-2">Edit</a>
                                 <form action="{{ route('admin.products.delete', $product->id) }}" method="POST"
@@ -147,22 +127,36 @@
             </table>
         </div>
     </div>
-    <div class="statistics-section">
-        <h2>Sales Statistics</h2>
-        <div>
-            <p><strong>Daily Sales:</strong> {{ $dailySales }}</p>
-            <p><strong>Monthly Sales:</strong> {{ $monthlySales }}</p>
-            <p><strong>Yearly Sales:</strong> {{ $yearlySales }}</p>
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-white shadow rounded-lg p-4">
+            <h5 class="font-bold text-xl mb-2">Daily Sales</h5>
+            <p class="text-3xl">${{number_format($dailySales, 2) }}</p>
         </div>
-
-        <div>
-            <h3>Best-selling Product</h3>
-            <p>{{ $bestProduct ? $bestProduct->name : 'No sales yet' }}</p>
+        <div class="bg-white shadow rounded-lg p-4">
+            <h5 class="font-bold text-xl mb-2">Monthly Sales</h5>
+            <p class="text-3xl">${{ number_format($monthlySales, 2) }}</p>
         </div>
-
-        <div>
-            <h3>Top Customer</h3>
-            <p>{{ $topCustomer ? $topCustomer->name : 'No sales yet' }}</p>
+        <div class="bg-white shadow rounded-lg p-4">
+            <h5 class="font-bold text-xl mb-2">Yearly Sales</h5>
+            <p class="text-3xl">${{ number_format($yearlySales, 2) }}</p>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+        <div class="bg-white shadow rounded-lg p-4">
+            <h5 class="font-bold text-xl mb-2">Best Selling Product</h5>
+            @if($bestSellingProduct)
+                <p>{{ $bestSellingProduct->name }} ({{ $bestSellingProduct->order_items_count }} sold)</p>
+            @else
+                <p>No data available</p>
+            @endif
+        </div>
+        <div class="bg-white shadow rounded-lg p-4">
+            <h5 class="font-bold text-xl mb-2">Top Customer</h5>
+            @if($topCustomer)
+                <p>{{ $topCustomer->name }} ({{ $topCustomer->orders_count }} orders)</p>
+            @else
+                <p>No data available</p>
+            @endif
         </div>
     </div>
 </div>

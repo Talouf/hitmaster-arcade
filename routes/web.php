@@ -1,7 +1,5 @@
 <?php
 
-// routes/web.php
-
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\NewsController;
@@ -32,29 +30,24 @@ Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
 Route::get('/search', [SearchController::class, 'search'])->name('search');
 
-
-// Routes for the user dashboard
+// User dashboard routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Routes for administrators
+// Admin routes
 Route::prefix('admin')->group(function () {
-    // Admin login routes
     Route::get('/login', [AdminAuthController::class, 'showLoginForm'])->name('admin.login');
     Route::post('/login', [AdminAuthController::class, 'login'])->name('admin.login.submit');
     Route::post('/logout', [AdminAuthController::class, 'logout'])->name('admin.logout');
 
     Route::middleware(['auth:admin'])->group(function () {
-        // Admin dashboard route
-        Route::get('/dashboard', [AdminController::class, 'dashboard'])->name('admin.dashboard');
-        // Admin news creation route
+        Route::get('/dashboard', [AdminDashboardController::class, 'index'])->name('admin.dashboard');
         Route::get('/news/create', [AdminController::class, 'createNews'])->name('admin.news.create');
         Route::post('/news', [AdminController::class, 'storeNews'])->name('admin.news.store');
         Route::delete('/news/{id}', [AdminController::class, 'deleteNews'])->name('admin.news.delete');
-        // Admin product creation routes
         Route::get('/products/create', [AdminController::class, 'createProduct'])->name('admin.products.create');
         Route::post('/products', [AdminController::class, 'storeProduct'])->name('admin.products.store');
         Route::delete('/products/{id}', [AdminController::class, 'deleteProduct'])->name('admin.products.delete');
@@ -92,7 +85,6 @@ Route::post('/cart/remove/{productId}', [CartController::class, 'removeFromCart'
 Route::get('/checkout/failed', function () {
     return view('checkout.failed');
 })->name('checkout.failed');
-
 
 Route::get('/profile/add-shipping-info', [ProfileController::class, 'addShippingInfo'])->name('profile.add-shipping-info');
 Route::post('/profile/store-shipping-info', [ProfileController::class, 'storeShippingInfo'])->name('profile.store-shipping-info');
