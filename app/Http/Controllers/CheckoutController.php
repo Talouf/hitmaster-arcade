@@ -17,8 +17,53 @@ use App\Models\Payment;
 
 class CheckoutController extends Controller
 {
-    public function checkout(Request $request)
+    public function index()
     {
+        $user = Auth::user();
+        $cartItems = $this->getCartItems();
+        $shippingAddresses = $user ? $user->shippingInfos : [];
+
+        return view('checkout.index', compact('cartItems', 'shippingAddresses'));
+    }
+    public function processShipping(Request $request)
+    {
+        $request->validate([
+            'address' => 'required|string',
+            'city' => 'required|string',
+            'state' => 'required|string',
+            'zip_code' => 'required|string',
+            'country' => 'required|string',
+        ]);
+
+        $shippingInfo = new ShippingInfo($request->all());
+        $shippingInfo->user_id = Auth::id();
+        $shippingInfo->save();
+
+        return $this->initiateStripeCheckout($shippingInfo->id);
+    }
+
+    private function initiateStripeCheckout($shippingInfoId)
+    {
+        Stripe::setApiKey(env('STRIPE_SECRET'));
+
+        $cartItems = $this->getCartItems();
+        $lineItems = $this->prepareLineItems($cartItems);
+
+        $session = StripeSession::create([
+            'payment_method_types' => ['card'],
+            'line_items' => $lineItems,
+            'mode' => 'payment',
+            'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
+            'cancel_url' => route('checkout.cancel'),
+            'client_reference_id' => $shippingInfoId,
+        ]);
+
+        return redirect($session->url);
+    }
+    /*public function checkout(Request $request)
+    {
+        $user = Auth::user();
+        $shippingAddresses = $user ? $user->shippingInfos : [];
         try {
             Stripe::setApiKey(env('STRIPE_SECRET'));
 
@@ -55,13 +100,14 @@ class CheckoutController extends Controller
 
             return view('checkout.index', [
                 'cartItems' => $cartItems,
-                'sessionId' => $session->id
+                'sessionId' => $session->id,
+                'shippingAddresses' => $shippingAddresses
             ]);
         } catch (\Exception $e) {
             Log::error('Error during payment: ' . $e->getMessage());
             return redirect()->route('checkout.cancel')->with('error', 'An error occurred during payment.');
         }
-    }
+    }*/
 
     public function success(Request $request)
     {
@@ -158,7 +204,7 @@ class CheckoutController extends Controller
 
     public function cancel()
     {
-        return view('checkout.cancel');
+        return redirect()->route('cart.show')->with('error', 'Checkout was cancelled.');
     }
 
     public function error()
@@ -189,4 +235,5 @@ class CheckoutController extends Controller
 
         return view('orders.show', compact('order'));
     }
+
 }

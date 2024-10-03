@@ -2,12 +2,14 @@
 
 @section('content')
 <div class="container mx-auto py-8 px-4">
-    <div class="bg-white rounded-lg shadow-md p-6">
+    <div class="bg-gray-500 rounded-lg shadow-md p-6">
         <h2 class="text-3xl font-bold mb-4">{{ $product->name }}</h2>
-        <img src="{{ asset('/' . $product->image) }}" alt="{{ $product->name }}" class="w-full max-w-md mx-auto mb-4 rounded">
-        <p class="text-xl mb-4">{{ $product->description }}</p>
-        <p class="text-2xl font-bold mb-4">${{ number_format($product->price, 2) }}</p>
-        <p class="mb-4">In stock: {{ $product->stock_quantity }}</p>
+        <div class="w-full max-w-md mx-auto mb-4">
+            <img src="{{ asset('/' . $product->image) }}" alt="{{ $product->name }}" class="w-full h-64 object-cover rounded"> <!-- Fixed height for image -->
+        </div>
+        <p class="text-xl mb-4 text-gray-800">{{ $product->description }}</p> <!-- Ensure visible text color -->
+        <p class="text-2xl font-bold mb-4 text-gray-800">${{ number_format($product->price, 2) }}</p> <!-- Ensure visible text color -->
+        <p class="mb-4 text-gray-800">In stock: {{ $product->stock_quantity }}</p> <!-- Ensure visible text color -->
         @if($product->stock_quantity > 0)
             <button onclick="addToCart({{ $product->id }})" class="bg-blue-500 text-white py-2 px-4 rounded">Add to Cart</button>
         @else
@@ -16,10 +18,10 @@
     </div>
 
     <div class="mt-8">
-        <h3 class="text-2xl font-bold mb-4">Reviews</h3>
+        <h3 class="text-2xl font-bold mb-4 text-white">Reviews</h3> <!-- Ensure visible text color -->
         @foreach ($product->reviews as $review)
             <div class="bg-gray-100 p-4 rounded mb-4">
-                <p class="mb-2">{{ $review->content }}</p>
+                <p class="mb-2 text-gray-800">{{ $review->content }}</p> <!-- Ensure visible text color -->
                 <p class="text-sm text-gray-600">- {{ $review->user->name }} - Rating: {{ $review->rating }}/5</p>
             </div>
         @endforeach
@@ -30,12 +32,12 @@
             $query->where('product_id', $product->id);
         })->exists())
             <div class="mt-8">
-                <h3 class="text-2xl font-bold mb-4">Write a Review</h3>
+                <h3 class="text-2xl font-bold mb-4 text-gray-800">Write a Review</h3> <!-- Ensure visible text color -->
                 <form action="{{ route('reviews.store') }}" method="POST" class="bg-white p-4 rounded">
                     @csrf
                     <input type="hidden" name="product_id" value="{{ $product->id }}">
                     <div class="mb-4">
-                        <label for="rating" class="block mb-2">Rating</label>
+                        <label for="rating" class="block mb-2 text-gray-800">Rating</label> <!-- Ensure visible text color -->
                         <select name="rating" id="rating" class="w-full p-2 border rounded">
                             @for ($i = 1; $i <= 5; $i++)
                                 <option value="{{ $i }}">{{ $i }}</option>
@@ -43,7 +45,7 @@
                         </select>
                     </div>
                     <div class="mb-4">
-                        <label for="content" class="block mb-2">Review</label>
+                        <label for="content" class="block mb-2 text-gray-800">Review</label> <!-- Ensure visible text color -->
                         <textarea name="content" id="content" rows="4" class="w-full p-2 border rounded"></textarea>
                     </div>
                     <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded">Submit Review</button>

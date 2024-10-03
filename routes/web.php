@@ -82,12 +82,13 @@ Route::middleware(['auth'])->group(function () {
 // Cart and checkout routes
 Route::post('/cart/add/{productId}', [CartController::class, 'addToCart'])->name('cart.add');
 Route::get('/cart', [CartController::class, 'showCart'])->name('cart.show');
-Route::post('/checkout', [CheckoutController::class, 'checkout'])->name('cart.checkout');
-Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
-Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
-Route::get('/checkout/error', [CheckoutController::class, 'error'])->name('checkout.error');
 Route::post('/cart/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::get('/cart/count', [CartController::class, 'getCartCount'])->name('cart.count');
+Route::post('/cart/checkout', [CartController::class, 'initiateCheckout'])->name('cart.checkout');
+Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
+Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
+Route::get('/checkout/error', [CheckoutController::class, 'error'])->name('checkout.error');
+Route::post('/cart/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::get('/checkout/failed', function () {
     return view('checkout.failed');
 })->name('checkout.failed');

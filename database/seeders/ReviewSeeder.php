@@ -29,7 +29,14 @@ class ReviewSeeder extends Seeder
                 'content' => 'Good product, but there is room for improvement.',
             ],
         ];
-
+        Review::factory()->count(100)->create([
+            'user_id' => fn() => random_int(1, 100), // Supposons que vous avez 100 utilisateurs
+            'product_id' => fn() => random_int(1, 10), // Supposons que vous avez 10 produits
+            'rating' => fn() => fake()->numberBetween(1, 5),
+            'content' => fn() => fake()->realText(200), // Texte de 200 caractères
+            'created_at' => now(),
+            'updated_at' => now(),
+        ]);
         foreach ($reviews as $review) {
             Review::create($review);
         }

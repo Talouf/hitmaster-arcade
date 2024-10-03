@@ -26,15 +26,13 @@ class ProfileController extends Controller
     public function register(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'surname' => 'required|string|max:255',
+            'nickname' => 'required|string|max:255|unique:users',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:8|confirmed',
         ]);
 
         $user = User::create([
-            'name' => $request->name,
-            'surname' => $request->surname,
+            'nickname' => $request->nickname,
             'email' => $request->email,
             'password' => Hash::make($request->password),
         ]);
@@ -53,14 +51,16 @@ class ProfileController extends Controller
     public function update(Request $request)
     {
         $request->validate([
-            'name' => 'required|string|max:255',
-            'surname' => 'required|string|max:255',
+            'nickname' => 'required|string|max:255|unique:users,nickname,' . Auth::id(),
+            'name' => 'nullable|string|max:255',
+            'surname' => 'nullable|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . Auth::id(),
             'old_password' => 'nullable|required_with:password|string',
             'password' => 'nullable|string|min:8|confirmed',
         ]);
 
         $user = Auth::user();
+        $user->nickname = $request->nickname;
         $user->name = $request->name;
         $user->surname = $request->surname;
         $user->email = $request->email;

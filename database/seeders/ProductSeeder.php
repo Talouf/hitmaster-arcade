@@ -23,7 +23,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Design ergonomique pour un confort maximal.',
                 'details' => 'Le design ergonomique assure un confort maximal pendant les longues sessions de jeu.',
                 'price' => 120,
-                'image' => 'images/white_controller.webp',
+                'image' => 'images/black_controller.webp',
                 'category_id' => 1
             ],
             [
@@ -31,7 +31,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Haute performance et réactivité.',
                 'details' => 'Haute performance et réactivité pour les joueurs professionnels.',
                 'price' => 150,
-                'image' => 'images/white_controller.webp',
+                'image' => 'images/2controller.webp',
                 'category_id' => 1
             ],
             [
@@ -47,7 +47,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Durabilité et confort exceptionnel.',
                 'details' => 'Fabriqué avec des matériaux de haute qualité pour une durabilité et un confort exceptionnels.',
                 'price' => 180,
-                'image' => 'images/white_controller.webp',
+                'image' => 'images/2controller.webp',
                 'category_id' => 1
             ],
             [
@@ -55,7 +55,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Idéal pour les tournois et les compétitions.',
                 'details' => 'Idéal pour les tournois et les compétitions grâce à sa haute performance.',
                 'price' => 220,
-                'image' => 'images/white_controller.webp',
+                'image' => 'images/black_controller.webp',
                 'category_id' => 1
             ],
             [
@@ -63,7 +63,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Contrôleur compact et portable.',
                 'details' => 'Facile à transporter et idéal pour les sessions de jeu en déplacement.',
                 'price' => 90,
-                'image' => 'images/white_controller.webp',
+                'image' => 'images/1controller.png',
                 'category_id' => 1
             ],
             [
@@ -79,7 +79,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Compatibilité multi-plateformes.',
                 'details' => 'Compatible avec plusieurs plateformes de jeu pour une flexibilité maximale.',
                 'price' => 160,
-                'image' => 'images/white_controller.webp',
+                'image' => 'images/2controller.webp',
                 'category_id' => 1
             ],
             [
@@ -87,7 +87,7 @@ class ProductSeeder extends Seeder
                 'description' => 'Résistance améliorée.',
                 'details' => 'Conçu pour résister à une utilisation intensive et prolongée.',
                 'price' => 140,
-                'image' => 'images/white_controller.webp',
+                'image' => 'images/1controller.png',
                 'category_id' => 1
             ]
         ];

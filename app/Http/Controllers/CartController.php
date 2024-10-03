@@ -8,6 +8,9 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Session;
 use App\Models\Product;
 use App\Models\Order;
+use Stripe\Stripe;
+use Stripe\Checkout\Session as StripeSession;
+use Illuminate\Support\Facades\Log;
 
 class CartController extends Controller
 {
@@ -140,5 +143,117 @@ class CartController extends Controller
             ->sum('quantity');
 
         return response()->json(['success' => true, 'cartCount' => $cartCount]);
+    }
+    public function initiateCheckout(Request $request)
+    {
+        try {
+            Stripe::setApiKey(env('STRIPE_SECRET'));
+
+            $cartItems = $this->getCartItems();
+            $lineItems = $this->prepareLineItems($cartItems);
+
+            $user = Auth::user();
+
+            $sessionParams = [
+                'payment_method_types' => ['card'],
+                'line_items' => $lineItems,
+                'mode' => 'payment',
+                'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
+                'cancel_url' => route('checkout.cancel'),
+                'shipping_address_collection' => [
+                    'allowed_countries' => ['US', 'CA', 'GB', 'FR', 'DE', 'IT', 'ES', 'NL', 'BE', 'CH', 'AT', 'SE', 'DK', 'FI', 'NO', 'IE'],
+                ],
+            ];
+
+            if ($user) {
+                $sessionParams['customer_email'] = $user->email;
+
+                $shippingInfo = $user->shippingInfos->first();
+                if ($shippingInfo) {
+                    $sessionParams['shipping_options'] = [
+                        [
+                            'shipping_rate_data' => [
+                                'type' => 'fixed_amount',
+                                'fixed_amount' => [
+                                    'amount' => 0,
+                                    'currency' => 'usd',
+                                ],
+                                'display_name' => 'Free shipping',
+                                'delivery_estimate' => [
+                                    'minimum' => [
+                                        'unit' => 'business_day',
+                                        'value' => 5,
+                                    ],
+                                    'maximum' => [
+                                        'unit' => 'business_day',
+                                        'value' => 7,
+                                    ],
+                                ],
+                            ],
+                        ],
+                    ];
+
+                    // Convert country name to ISO 2-letter code if necessary
+                    $countryCode = $this->getCountryCode($shippingInfo->country);
+                    if ($countryCode && in_array($countryCode, $sessionParams['shipping_address_collection']['allowed_countries'])) {
+                        $sessionParams['shipping_address_collection']['allowed_countries'] = [$countryCode];
+                    }
+                }
+            }
+
+            $session = StripeSession::create($sessionParams);
+
+            return redirect($session->url);
+        } catch (\Exception $e) {
+            Log::error('Checkout error: ' . $e->getMessage());
+            return back()->with('error', 'An error occurred during checkout. Please try again.');
+        }
+    }
+    private function getCountryCode($countryName)
+    {
+        $countries = [
+            'United States' => 'US',
+            'Canada' => 'CA',
+            'United Kingdom' => 'GB',
+            'France' => 'FR',
+            'Germany' => 'DE',
+            'Italy' => 'IT',
+            'Spain' => 'ES',
+            'Netherlands' => 'NL',
+            'Belgium' => 'BE',
+            'Switzerland' => 'CH',
+            'Austria' => 'AT',
+            'Sweden' => 'SE',
+            'Denmark' => 'DK',
+            'Finland' => 'FI',
+            'Norway' => 'NO',
+            'Ireland' => 'IE',
+            // Add more countries as needed
+        ];
+
+        return $countries[ucwords(strtolower($countryName))] ?? null;
+    }
+    private function getCartItems()
+    {
+        $cartId = Session::get('cart_id');
+        return OrderItem::where('order_id', $cartId)
+            ->where('is_ordered', false)
+            ->get();
+    }
+
+    private function prepareLineItems($cartItems)
+    {
+        return $cartItems->map(function ($item) {
+            return [
+                'price_data' => [
+                    'currency' => 'usd',
+                    'product_data' => [
+                        'name' => $item->product->name,
+                    ],
+                    'unit_amount' => $item->price * 100,
+                ],
+                'quantity' => $item->quantity,
+            ];
+        })->toArray();
     }
 }
