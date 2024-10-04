@@ -46,6 +46,9 @@ class RegisteredUserController extends Controller
                 'guest_email' => null
             ]);
 
+        // Link existing newsletter subscription
+        $user->linkNewsletterSubscription();
+
         return redirect(route('profile.edit', absolute: false));
     }
 }

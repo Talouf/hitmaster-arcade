@@ -4,16 +4,17 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateNewsletterSubscriptionsTable extends Migration
+class CreateNewsletterSubscriptionTable extends Migration
 {
     public function up()
     {
         Schema::create('newsletter_subscriptions', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
-            $table->string('email');
-            $table->date('subscription_date');
-            $table->boolean('is_active');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
+            $table->string('email')->unique();
+            $table->string('token')->unique();
+            $table->date('subscription_date')->default(now());
+            $table->boolean('is_active')->default(true);
             $table->timestamps();
         });
     }
@@ -23,4 +24,3 @@ class CreateNewsletterSubscriptionsTable extends Migration
         Schema::dropIfExists('newsletter_subscriptions');
     }
 }
-

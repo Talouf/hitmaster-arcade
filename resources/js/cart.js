@@ -15,31 +15,42 @@ function setupCart() {
     });
 }
 
-window.addToCart = function (productId) {
+window.addToCart = function (productId, event) {
+    if (event && event.preventDefault) {
+        event.preventDefault();
+    }
+
     const token = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
+    const quantityInput = document.querySelector(`#quantity-${productId}`);
+    const quantity = quantityInput ? parseInt(quantityInput.value) : 1;
 
     fetch(`/cart/add/${productId}`, {
         method: 'POST',
         headers: {
             'X-CSRF-TOKEN': token,
-            'Content-Type': 'application/json'
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
         },
-        body: JSON.stringify({ quantity: 1 })
+        body: JSON.stringify({ quantity: quantity })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showNotification('Ajouté au panier', 'success'); // notification
+        .then(response => {
+            if (!response.ok) {
+                return response.json().then(err => { throw err; });
+            }
+            return response.json();
+        })
+        .then(data => {
+            showNotification('Ajouté au panier', 'success');
             updateCartDisplay(productId, data.updatedQuantity);
             updateCartCount(data.cartCount);
             updateTotalProducts(data.totalProducts);
             updateDropdownCart(data.cartItems);
             updateCartTotal(data.cartTotal);
-        } else {
-            showNotification('Échec de l\'ajout au panier', 'error'); // error message
-        }
-    })
-    .catch(error => console.error('Error:', error));
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            showNotification(error.message || 'Échec de l\'ajout au panier', 'error');
+        });
 }
 
 window.removeFromCart = function (productId) {
@@ -55,21 +66,21 @@ window.removeFromCart = function (productId) {
         },
         body: JSON.stringify({ quantity: quantityToRemove })
     })
-    .then(response => response.json())
-    .then(data => {
-        if (data.success) {
-            showNotification('Retiré du panier', 'error'); // notification
-            updateCartDisplay(productId, data.remainingQuantity);
-            updateCartCount(data.cartCount);
-            updateTotalProducts(data.totalProducts);
-            updateDropdownCart(data.cartItems);
-            updateCartTotal(data.cartTotal);
-            checkEmptyCart(data.cartCount);
-        } else {
-            showNotification('Échec du retrait du panier', 'error'); // error message
-        }
-    })
-    .catch(error => console.error('Error:', error));
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification('Retiré du panier', 'error'); // notification
+                updateCartDisplay(productId, data.remainingQuantity);
+                updateCartCount(data.cartCount);
+                updateTotalProducts(data.totalProducts);
+                updateDropdownCart(data.cartItems);
+                updateCartTotal(data.cartTotal);
+                checkEmptyCart(data.cartCount);
+            } else {
+                showNotification('Échec du retrait du panier', 'error'); // error message
+            }
+        })
+        .catch(error => console.error('Error:', error));
 };
 
 function fetchCartCount() {
@@ -210,5 +221,32 @@ function updateCartTotal(total) {
     if (cartTotalElement) {
         // Ensure total is a number before using toFixed
         cartTotalElement.textContent = parseFloat(total).toFixed(2);
+    }
+    function showNotification(message, type) {
+        const notification = document.createElement('div');
+        notification.textContent = message;
+        notification.className = `notification ${type}`;
+        notification.style.position = 'fixed';
+        notification.style.top = '20px';
+        notification.style.right = '20px';
+        notification.style.padding = '10px 20px';
+        notification.style.borderRadius = '5px';
+        notification.style.zIndex = '1000';
+        notification.style.maxWidth = '300px'; // Limit width for longer messages
+        notification.style.wordWrap = 'break-word'; // Allow text to wrap
+
+        if (type === 'success') {
+            notification.style.backgroundColor = '#4CAF50';
+            notification.style.color = 'white';
+        } else if (type === 'error') {
+            notification.style.backgroundColor = '#f44336';
+            notification.style.color = 'white';
+        }
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
     }
 }

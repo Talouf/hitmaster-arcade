@@ -18,10 +18,12 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminDashboardController;
+use App\Http\Controllers\NewsletterController;
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
+Route::get('/products/compare', [ProductController::class, 'compare'])->name('products.compare');
 Route::get('/mentions', [LegalController::class, 'index'])->name('mentions');
 Route::resource('products', ProductController::class);
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
@@ -31,6 +33,9 @@ Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');
 Route::get('/search', [SearchController::class, 'search'])->name('search');
+Route::post('/newsletter/subscribe', [NewsLetterController::class, 'subscribe'])->name('newsletter.subscribe');
+Route::get('/newsletter/unsubscribe/{token}', [NewsLetterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
+Route::post('/newsletter/toggle', [NewsLetterController::class, 'toggleSubscription'])->name('newsletter.toggle')->middleware('auth');
 
 // User dashboard routes
 Route::middleware(['auth', 'verified'])->group(function () {
@@ -53,6 +58,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/products/create', [AdminController::class, 'createProduct'])->name('admin.products.create');
         Route::post('/products', [AdminController::class, 'storeProduct'])->name('admin.products.store');
         Route::delete('/products/{id}', [AdminController::class, 'deleteProduct'])->name('admin.products.delete');
+        Route::patch('/admin/products/{id}/stock', [ProductController::class, 'updateStock'])->name('admin.products.updateStock');
         Route::get('/admin/news/{id}/edit', [AdminController::class, 'editNews'])->name('admin.news.edit');
         Route::put('/admin/news/{id}', [AdminController::class, 'updateNews'])->name('admin.news.update');
         Route::get('/admin/products/{id}/edit', [AdminController::class, 'editProduct'])->name('admin.products.edit');
@@ -60,6 +66,11 @@ Route::prefix('admin')->group(function () {
         Route::put('/admin/orders/{id}/status', [AdminController::class, 'updateOrderStatus'])->name('admin.orders.updateStatus');
         Route::get('/admin/orders/{id}', [AdminController::class, 'showOrder'])->name('admin.orders.show');
         Route::get('/orders', [AdminController::class, 'orders'])->name('admin.orders.index');
+        Route::get('/admin/send-newsletter', function () {
+            return view('admin.send-newsletter');
+        })->name('admin.showSendNewsletter');
+        Route::post('/admin/send-newsletter', [NewsLetterController::class, 'sendNewsletter'])->name('admin.sendNewsletter');
+
     });
 });
 

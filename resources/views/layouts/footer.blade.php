@@ -1,12 +1,17 @@
 <!-- resources/views/layouts/footer.blade.php -->
 
+
 <div class="home_border_top"></div>
 <footer class="p-8 text-center mt-auto">
     <div class="container mx-auto">
-        <div class="mb-4">
-            <input type="email" placeholder="Votre Email" class="px-4 py-2 rounded">
-            <button class="ml-2 px-6 py-2 bg-red-600 text-white rounded">S'abonner</button>
-        </div>
+        <form action="{{ route('newsletter.subscribe') }}" method="POST" class="mb-4">
+            @csrf
+            <input type="email" name="email" placeholder="Votre Email" class="px-4 py-2 rounded" required>
+            <button type="submit" class="ml-2 px-6 py-2 bg-red-600 text-white rounded">S'abonner</button>
+        </form>
+        @if (session('newsletter_success'))
+            <div class="text-green-500 mb-4">{{ session('newsletter_success') }}</div>
+        @endif
         <p class="text-gray-400">HitMaster Arcade</p>
         <div class="mt-4 flex justify-center space-x-4">
             <a href="#" class="text-gray-400 hover:text-white">FAQ</a>

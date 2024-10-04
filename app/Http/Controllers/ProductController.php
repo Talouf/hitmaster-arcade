@@ -9,14 +9,15 @@ class ProductController extends Controller
 {
     public function index()
     {
-        $products = Product::all();
+        $products = Product::where('stock_quantity', '>', 0)->get();
         return view('products.index', compact('products'));
     }
 
     public function show($id)
     {
         $product = Product::with('reviews')->findOrFail($id);
-        return view('products.show', compact('product'));
+        $inStock = $product->stock_quantity > 0;
+        return view('products.show', compact('product', 'inStock'));
     }
 
     public function apiIndex()
@@ -47,14 +48,14 @@ class ProductController extends Controller
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        $imageName = time().'.'.$request->image->extension();  
+        $imageName = time() . '.' . $request->image->extension();
         $request->image->move(public_path('images'), $imageName);
 
         Product::create([
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'image' => 'images/'.$imageName,
+            'image' => 'images/' . $imageName,
             'stock_quantity' => $request->stock_quantity,
         ]);
 
@@ -81,20 +82,32 @@ class ProductController extends Controller
         $product->update($request->except('image'));
 
         if ($request->hasFile('image')) {
-            $imageName = time().'.'.$request->image->extension();  
+            $imageName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('images'), $imageName);
             $product->image = 'images/' . $imageName;
             $product->save();
         }
 
-        return redirect()->route('products.index')->with('success', 'Product updated successfully.');
+        return redirect()->route('admin.products.index')->with('success', 'Product updated successfully.');
     }
-
     public function destroy($id)
     {
         $product = Product::findOrFail($id);
         $product->delete(); // This will now soft delete
 
         return redirect()->route('products.index')->with('success', 'Product deleted successfully.');
+    }
+
+    public function compare(Request $request)
+    {
+        $productIds = $request->input('product', []);
+        if (empty($productIds)) {
+            return redirect()->route('products.index')->with('error', 'Please select at least one product to compare.');
+        }
+        $products = Product::whereIn('id', $productIds)->get();
+        if ($products->isEmpty()) {
+            return redirect()->route('products.index')->with('error', 'No valid products selected for comparison.');
+        }
+        return view('products.compare', compact('products'));
     }
 }

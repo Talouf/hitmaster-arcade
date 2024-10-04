@@ -33,6 +33,13 @@ class CartController extends Controller
     {
         $product = Product::findOrFail($productId);
 
+        if ($product->stock_quantity <= 0) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Ce produit est en rupture de stock.'
+            ], 400);
+        }
+
         if (!Session::has('cart_id')) {
             Session::put('cart_id', uniqid());
         }
@@ -44,6 +51,18 @@ class CartController extends Controller
             ->first();
 
         if ($orderItem) {
+            if ($orderItem->quantity >= 3) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Vous ne pouvez pas commander plus de 3 unités de ce produit.'
+                ], 400);
+            }
+            if ($orderItem->quantity >= $product->stock_quantity) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Stock insuffisant pour ce produit.'
+                ], 400);
+            }
             $orderItem->quantity += 1;
             $orderItem->save();
         } else {
@@ -150,6 +169,10 @@ class CartController extends Controller
             Stripe::setApiKey(env('STRIPE_SECRET'));
 
             $cartItems = $this->getCartItems();
+            $validationResult = $this->validateCartItems($cartItems);
+            if (!$validationResult['valid']) {
+                return back()->with('error', $validationResult['message']);
+            }
             $lineItems = $this->prepareLineItems($cartItems);
 
             $user = Auth::user();
@@ -255,5 +278,22 @@ class CartController extends Controller
                 'quantity' => $item->quantity,
             ];
         })->toArray();
+    }
+
+    private function validateCartItems($cartItems)
+    {
+        foreach ($cartItems as $item) {
+            $product = Product::find($item->product_id);
+            if (!$product) {
+                return ['valid' => false, 'message' => 'Un produit dans votre panier n\'est plus disponible.'];
+            }
+            if ($item->quantity > $product->stock_quantity) {
+                return ['valid' => false, 'message' => "Stock insuffisant pour {$product->name}."];
+            }
+            if ($item->quantity > 3) {
+                return ['valid' => false, 'message' => "Vous ne pouvez pas commander plus de 3 unités de {$product->name}."];
+            }
+        }
+        return ['valid' => true];
     }
 }

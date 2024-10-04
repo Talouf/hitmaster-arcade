@@ -47,4 +47,16 @@ class User extends Authenticatable
             ]);
         }
     }
+    public function newsletterSubscription()
+    {
+        return $this->hasOne(Newslettersubscription::class);
+    }
+    public function linkNewsletterSubscription()
+    {
+        $subscription = NewsletterSubscription::where('email', $this->email)->whereNull('user_id')->first();
+        if ($subscription) {
+            $subscription->user_id = $this->id;
+            $subscription->save();
+        }
+    }
 }

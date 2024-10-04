@@ -16,7 +16,8 @@ class ProductSeeder extends Seeder
                 'details' => 'Conçu pour offrir une précision et une durabilité exceptionnelles.',
                 'price' => 100,
                 'image' => 'images/white_controller.webp',
-                'category_id' => 1
+                'category_id' => 1,
+                'stock_quantity' => 30
             ],
             [
                 'name' => 'HitMaster Beta',
@@ -24,7 +25,8 @@ class ProductSeeder extends Seeder
                 'details' => 'Le design ergonomique assure un confort maximal pendant les longues sessions de jeu.',
                 'price' => 120,
                 'image' => 'images/black_controller.webp',
-                'category_id' => 1
+                'category_id' => 1,
+                'stock_quantity' => 30
             ],
             [
                 'name' => 'HitMaster Gamma',
@@ -32,7 +34,8 @@ class ProductSeeder extends Seeder
                 'details' => 'Haute performance et réactivité pour les joueurs professionnels.',
                 'price' => 150,
                 'image' => 'images/2controller.webp',
-                'category_id' => 1
+                'category_id' => 1,
+                'stock_quantity' => 25
             ],
             [
                 'name' => 'HitMaster Delta',
@@ -40,7 +43,8 @@ class ProductSeeder extends Seeder
                 'details' => 'Conçu pour offrir une performance optimale aux joueurs professionnels.',
                 'price' => 200,
                 'image' => 'images/white_controller.webp',
-                'category_id' => 1
+                'category_id' => 1,
+                'stock_quantity' => 20
             ],
             [
                 'name' => 'HitMaster Epsilon',
@@ -48,7 +52,8 @@ class ProductSeeder extends Seeder
                 'details' => 'Fabriqué avec des matériaux de haute qualité pour une durabilité et un confort exceptionnels.',
                 'price' => 180,
                 'image' => 'images/2controller.webp',
-                'category_id' => 1
+                'category_id' => 1,
+                'stock_quantity' => 0
             ],
             [
                 'name' => 'HitMaster Zeta',
@@ -56,7 +61,8 @@ class ProductSeeder extends Seeder
                 'details' => 'Idéal pour les tournois et les compétitions grâce à sa haute performance.',
                 'price' => 220,
                 'image' => 'images/black_controller.webp',
-                'category_id' => 1
+                'category_id' => 1,
+                'stock_quantity' => 0
             ],
             [
                 'name' => 'HitMaster Eta',
@@ -64,7 +70,8 @@ class ProductSeeder extends Seeder
                 'details' => 'Facile à transporter et idéal pour les sessions de jeu en déplacement.',
                 'price' => 90,
                 'image' => 'images/1controller.png',
-                'category_id' => 1
+                'category_id' => 1,
+                'stock_quantity' => 5
             ],
             [
                 'name' => 'HitMaster Theta',
@@ -72,7 +79,8 @@ class ProductSeeder extends Seeder
                 'details' => 'Permet une personnalisation avancée des commandes et des configurations.',
                 'price' => 130,
                 'image' => 'images/white_controller.webp',
-                'category_id' => 1
+                'category_id' => 1,
+                'stock_quantity' => 1
             ],
             [
                 'name' => 'HitMaster Iota',
@@ -80,7 +88,8 @@ class ProductSeeder extends Seeder
                 'details' => 'Compatible avec plusieurs plateformes de jeu pour une flexibilité maximale.',
                 'price' => 160,
                 'image' => 'images/2controller.webp',
-                'category_id' => 1
+                'category_id' => 1,
+                'stock_quantity' => 0
             ],
             [
                 'name' => 'HitMaster Kappa',
@@ -88,7 +97,8 @@ class ProductSeeder extends Seeder
                 'details' => 'Conçu pour résister à une utilisation intensive et prolongée.',
                 'price' => 140,
                 'image' => 'images/1controller.png',
-                'category_id' => 1
+                'category_id' => 1,
+                'stock_quantity' => 3
             ]
         ];
 
