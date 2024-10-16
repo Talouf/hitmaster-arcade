@@ -1,0 +1,26 @@
+<?php
+
+return [
+    'home' => 'Home',
+    'about' => 'About',
+    'products' => 'Products',
+    'contact' => 'Contact',
+    'news' => 'News',
+    'search' => 'Search',
+    'cart' => 'Cart',
+    'profile' => 'Profile',
+    'login' => 'Login',
+    'register' => 'Register',
+    'logout' => 'Logout',
+    'admin_dashboard' => 'Admin Dashboard',
+    'logged_as_admin' => 'Logged in as Admin',
+    'dashboard' => 'Dashboard',
+    'empty_cart' => 'Your cart is empty',
+    'add_to_cart' => 'Add to Cart',
+    'remove_from_cart' => 'Remove from Cart',
+    'total' => 'Total',
+    'checkout' => 'Checkout',
+    'language' => 'Language',
+    'english' => 'English',
+    'french' => 'French',
+];

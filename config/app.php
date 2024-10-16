@@ -77,12 +77,12 @@ return [
     | set to any locale for which you plan to have translation strings.
     |
     */
+    'locale' => env('APP_LOCALE', 'fr'),
+    'fallback_locale' => 'en',
+    'available_locales' => ['en', 'fr'],
 
-    'locale' => env('APP_LOCALE', 'en'),
+    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),  // Default to 'en_US' if not set in .env
 
-    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
-
-    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 
     /*
     |--------------------------------------------------------------------------
@@ -126,7 +126,7 @@ return [
         'Auth' => Illuminate\Support\Facades\Auth::class,
         'Schema' => Illuminate\Support\Facades\Schema::class,
         'Str' => Illuminate\Support\Str::class,
-    ],    
+    ],
     'providers' => [
 
         /*
@@ -154,11 +154,11 @@ return [
         Illuminate\Translation\TranslationServiceProvider::class,
         Illuminate\Validation\ValidationServiceProvider::class,
         Illuminate\View\ViewServiceProvider::class,
-    
+
         /*
          * Package Service Providers...
          */
-    
+
         /*
          * Application Service Providers...
          */
@@ -169,5 +169,5 @@ return [
         App\Providers\RouteServiceProvider::class,
         App\Providers\AdminAuthServiceProvider::class,
     ],
-        
+
 ];

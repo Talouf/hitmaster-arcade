@@ -17,6 +17,29 @@ use App\Models\Payment;
 
 class CheckoutController extends Controller
 {
+    private function getCartItems()
+    {
+        $cartId = Session::get('cart_id');
+        return OrderItem::where('order_id', $cartId)
+            ->where('is_ordered', false)
+            ->get();
+    }
+
+    private function prepareLineItems($cartItems)
+    {
+        return $cartItems->map(function ($item) {
+            return [
+                'price_data' => [
+                    'currency' => 'usd',
+                    'product_data' => [
+                        'name' => $item->product->name,
+                    ],
+                    'unit_amount' => $item->price * 100,
+                ],
+                'quantity' => $item->quantity,
+            ];
+        })->toArray();
+    }
     public function index()
     {
         $user = Auth::user();

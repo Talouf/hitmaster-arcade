@@ -1,5 +1,11 @@
+<?php
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
+
+App::setLocale(Session::get('applocale', config('app.locale')));
+?>
 <!DOCTYPE html>
-<html lang="fr">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
 <head>
     <meta charset="UTF-8">
@@ -24,18 +30,27 @@
             font-family: 'Montserrat', sans-serif;
         }
     </style>
-    @vite(['resources/css/app.css', 'resources/js/app.js', 'resources/js/navigation.js', 'resources/js/cart.js', 'resources/js/utils.js'])
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
 
 <body class="bg-gray-900 text-white">
     <!-- Navbar -->
     @include('layouts.navigation')
+
     <main class="py-8">
         @yield('content')
-
     </main>
+
     @include('layouts.footer')
 
+    @if(session()->has('locale_changed'))
+        <div style="position: fixed; top: 0; left: 0; background: yellow; padding: 5px; z-index: 9999;">
+            Current Locale: {{ App::getLocale() }}<br>
+            Session Locale: {{ Session::get('applocale', 'Not set') }}<br>
+            Home Translation: {{ __('messages.home') }}<br>
+            Raw Session Data: {{ json_encode(Session::all()) }}
+        </div>
+    @endif
 </body>
 
 </html>

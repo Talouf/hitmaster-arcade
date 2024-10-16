@@ -18,7 +18,14 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\LegalController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminDashboardController;
-use App\Http\Controllers\NewsletterController;
+use App\Http\Controllers\NewsLetterController;
+use App\Http\Controllers\LanguageController;
+
+
+Route::get('/test-english', function () {
+    App::setLocale('en');
+    return view('welcome');
+});
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -37,6 +44,8 @@ Route::post('/newsletter/subscribe', [NewsLetterController::class, 'subscribe'])
 Route::get('/newsletter/unsubscribe/{token}', [NewsLetterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
 Route::post('/newsletter/toggle', [NewsLetterController::class, 'toggleSubscription'])->name('newsletter.toggle')->middleware('auth');
 
+// Language switch route
+Route::get('lang/{lang}', [LanguageController::class, 'switchLanguage'])->name('lang.switch');
 // User dashboard routes
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -69,8 +78,7 @@ Route::prefix('admin')->group(function () {
         Route::get('/admin/send-newsletter', function () {
             return view('admin.send-newsletter');
         })->name('admin.showSendNewsletter');
-        Route::post('/admin/send-newsletter', [NewsLetterController::class, 'sendNewsletter'])->name('admin.sendNewsletter');
-
+        Route::post('/admin/send-newsletter', [NewsletterController::class, 'sendNewsletter'])->name('admin.sendNewsletter');
     });
 });
 
@@ -94,7 +102,6 @@ Route::post('/cart/checkout', [CartController::class, 'initiateCheckout'])->name
 Route::get('/checkout/success', [CheckoutController::class, 'success'])->name('checkout.success');
 Route::get('/checkout/cancel', [CheckoutController::class, 'cancel'])->name('checkout.cancel');
 Route::get('/checkout/error', [CheckoutController::class, 'error'])->name('checkout.error');
-Route::post('/cart/remove/{productId}', [CartController::class, 'removeFromCart'])->name('cart.remove');
 Route::get('/checkout/failed', function () {
     return view('checkout.failed');
 })->name('checkout.failed');
@@ -103,8 +110,6 @@ Route::get('/profile/add-shipping-info', [ProfileController::class, 'addShipping
 Route::post('/profile/store-shipping-info', [ProfileController::class, 'storeShippingInfo'])->name('profile.store-shipping-info');
 
 Route::post('/reviews/store', [ReviewController::class, 'store'])->name('reviews.store');
-
-
 
 Route::post('/contact', [ContactController::class, 'submit'])->name('contact.submit');
 

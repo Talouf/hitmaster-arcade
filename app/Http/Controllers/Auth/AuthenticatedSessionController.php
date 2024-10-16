@@ -8,6 +8,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Log;
+use App\Providers\RouteServiceProvider;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -22,15 +24,18 @@ class AuthenticatedSessionController extends Controller
     /**
      * Handle an incoming authentication request.
      */
-    public function store(LoginRequest $request): RedirectResponse
-    {
-        $request->authenticate();
+    public function store(LoginRequest $request)
+{
+    Log::info('Login attempt', ['email' => $request->email]);
 
-        $request->session()->regenerate();
+    $request->authenticate();
 
-        return redirect()->intended('/');
-    }
+    $request->session()->regenerate();
 
+    Log::info('Login successful', ['user' => auth()->user()]);
+
+    return redirect()->intended(RouteServiceProvider::HOME);
+}
     /**
      * Destroy an authenticated session.
      */

@@ -22,8 +22,11 @@ class ProductController extends Controller
 
     public function apiIndex()
     {
-        $products = Product::all();
-        return response()->json($products);
+        $products = Product::where('stock_quantity', '>', 0)->get();
+        return response()->json([
+            'success' => true,
+            'data' => $products
+        ], 200);
     }
 
     public function home()
@@ -110,4 +113,5 @@ class ProductController extends Controller
         }
         return view('products.compare', compact('products'));
     }
+
 }

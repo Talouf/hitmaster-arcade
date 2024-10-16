@@ -1,36 +1,24 @@
-@media (max-width: 1024px) {
-    #nav-links {
-        display: none;
-    }
-
-    #mobile-nav-links {
-        display: flex;
-    }
-}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
 body {
     background: rgb(9,9,10);
-background: -moz-linear-gradient(180deg, rgba(9,9,10,1) 0%, rgba(59,57,57,1) 8%, rgba(9,9,10,1) 35%, rgba(9,9,10,1) 65%, rgba(53,51,51,1) 90%, rgba(9,9,10,1) 100%);
-background: -webkit-linear-gradient(180deg, rgba(9,9,10,1) 0%, rgba(59,57,57,1) 8%, rgba(9,9,10,1) 35%, rgba(9,9,10,1) 65%, rgba(53,51,51,1) 90%, rgba(9,9,10,1) 100%);
-background: linear-gradient(180deg, rgba(9,9,10,1) 0%, rgba(59,57,57,1) 8%, rgba(9,9,10,1) 35%, rgba(9,9,10,1) 65%, rgba(53,51,51,1) 90%, rgba(9,9,10,1) 100%);
-filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#09090a",endColorstr="#09090a",GradientType=1);
+    background: linear-gradient(180deg, rgba(9,9,10,1) 0%, rgba(59,57,57,1) 8%, rgba(9,9,10,1) 35%, rgba(9,9,10,1) 65%, rgba(53,51,51,1) 90%, rgba(9,9,10,1) 100%);
     color: #fff;
     font-family: Roboto, sans-serif;
 }
 
 .review_bg {
-    background: rgb(255, 255, 255);
-    background: -moz-linear-gradient(180deg, rgba(255, 255, 255, 1) 10%, rgba(153, 153, 153, 1) 100%);
-    background: -webkit-linear-gradient(180deg, rgba(255, 255, 255, 1) 10%, rgba(153, 153, 153, 1) 100%);
     background: linear-gradient(180deg, rgba(255, 255, 255, 1) 10%, rgba(153, 153, 153, 1) 100%);
-    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#ffffff", endColorstr="#999999", GradientType=1);
     color: black;
 }
 
 .review_bg.rounded {
     border-radius: 2.75rem;
 }
-.h-40{
+
+.h-40 {
     border-radius: 3.5rem;
 }
 
@@ -40,42 +28,10 @@ filter: progid:DXImageTransform.Microsoft.gradient(startColorstr="#09090a",endCo
     margin-right: 10%;
 }
 
-nav {
-    padding: 1rem;
-}
-
-nav a {
-    color: #fff;
-}
-
 nav a:hover {
     color: #e53e3e;
 }
 
-section {
-    margin-bottom: 2rem;
-}
-
-section h2 {
-    margin-bottom: 1rem;
-}
-
-section p {
-    margin-bottom: 1rem;
-}
-
-/*.bg-gray-700 {
-    background-color: #2d3748;
-}
-
-.bg-gray-800 {
-    background-color: #2d3748;
-}
-
-.bg-red-600 {
-    background-color: #e53e3e;
-}
-*/
 button {
     background-color: #e53e3e;
     padding: 0.5rem 1rem;
@@ -102,7 +58,6 @@ textarea {
     right: 20px;
     padding: 10px 20px;
     background-color: #4caf50;
-    /* Green */
     color: white;
     border-radius: 5px;
     z-index: 1000;
@@ -112,14 +67,13 @@ textarea {
 
 .notification.error {
     background-color: #f44336;
-    /* Red */
 }
 
 .notification.fade-out {
     opacity: 0;
 }
 
-.h-13{
+.h-13 {
     height: 8rem;
 }
 
@@ -131,25 +85,24 @@ textarea {
 #searchInput.w-48 {
     width: 12rem; 
 }
-/* Hide all products and news items by default on mobile */
+
 @media (max-width: 768px) {
     .product-item,
     .news-item {
         display: none;
     }
 
-    /* Show only the first product and news item on mobile */
     .product-item:first-child,
     .news-item:first-child {
         display: block;
     }
 }
-/* Ensure all review items have the same height */
+
 .reviews-container {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    padding: 0 1rem; /* Add padding to create space on the left and right */
+    padding: 0 1rem;
 }
 
 .review-item {
@@ -158,41 +111,55 @@ textarea {
     justify-content: space-between;
     flex-grow: 1;
     margin: 0.5rem;
-    max-width: 23%; /* Ensure the review items do not exceed the container width */
-    box-sizing: border-box; /* Include padding and border in the element's total width and height */
+    max-width: 23%;
+    box-sizing: border-box;
 }
 
 .review-item p {
     margin: 0.5rem 0;
 }
 
-/* Center reviews on mobile screens */
 @media (max-width: 768px) {
     .reviews-container {
-        padding: 0 0.5rem; /* Adjust padding for mobile view */
-        flex-direction: column; /* Stack reviews vertically */
-        align-items: center; /* Center reviews horizontally */
+        padding: 0 0.5rem;
+        flex-direction: column;
+        align-items: center;
     }
 
     .review-item {
-        max-width: 65%; /* Ensure the review items take full width on mobile */
-        margin: 0.5rem auto; /* Center the review items */
+        max-width: 65%;
+        margin: 0.5rem auto;
     }
 }
 
-/* Adjust spacing for larger screens */
 @media (min-width: 769px) {
     .reviews-container {
-        justify-content: space-around; /* Distribute space evenly */
+        justify-content: space-around;
     }
 }
 
 .news-item {
     margin-bottom: 2rem;
 }
+
 @media (min-width: 640px) {
     .news-item {
         padding-left: 0.5rem;
         padding-right: 0.5rem;
+    }
+}
+
+/* Mobile menu styles */
+#mobileMenu {
+    transition: all 0.3s ease-in-out;
+}
+
+#mobileMenu.hidden {
+    display: none;
+}
+
+@media (min-width: 768px) {
+    #mobileMenu {
+        display: none !important;
     }
 }

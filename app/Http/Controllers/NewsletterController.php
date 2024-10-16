@@ -7,7 +7,7 @@ use App\Models\NewsletterSubscription;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Mail;
 
-class NewsLetterController extends Controller
+class NewsletterController extends Controller
 {
     public function subscribe(Request $request)
     {

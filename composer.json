@@ -12,6 +12,7 @@
         "illuminate/database": "*",
         "illuminate/filesystem": "*",
         "laravel/framework": "*",
+        "laravel/sanctum": "^4.0",
         "laravel/tinker": "^2.9",
         "stripe/stripe-php": "^14.9"
     },

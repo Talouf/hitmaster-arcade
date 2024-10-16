@@ -10,17 +10,27 @@ function setupProfileMenu(buttonId, menuId) {
     const button = document.getElementById(buttonId);
     const menu = document.getElementById(menuId);
 
-    button.addEventListener('click', () => menu.classList.toggle('hidden'));
+    if (button && menu) {
+        button.addEventListener('click', (event) => {
+            event.stopPropagation();
+            menu.classList.toggle('hidden');
+        });
 
-    document.addEventListener('click', (event) => {
-        if (!button.contains(event.target) && !menu.contains(event.target)) {
-            menu.classList.add('hidden');
-        }
-    });
+        document.addEventListener('click', (event) => {
+            if (!button.contains(event.target) && !menu.contains(event.target)) {
+                menu.classList.add('hidden');
+            }
+        });
+    }
 }
 
 function setupMobileMenu() {
-    document.getElementById('menuButton').addEventListener('click', function () {
-        document.getElementById('mobileMenu').classList.toggle('hidden');
-    });
+    const menuButton = document.getElementById('menuButton');
+    const mobileMenu = document.getElementById('mobileMenu');
+
+    if (menuButton && mobileMenu) {
+        menuButton.addEventListener('click', function () {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
 }
