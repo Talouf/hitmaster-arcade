@@ -86,15 +86,32 @@ textarea {
     width: 12rem; 
 }
 
+.product-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.product-item img {
+    height: 200px;
+    object-fit: cover;
+}
+
 @media (max-width: 768px) {
     .product-item,
     .news-item {
-        display: none;
+        display: block; /* Show all items */
     }
 
-    .product-item:first-child,
-    .news-item:first-child {
-        display: block;
+    .grid {
+        grid-template-columns: 1fr; /* Single column layout on mobile */
+    }
+
+    .product-item {
+        margin-bottom: 1rem; /* Add some space between items */
+    }
+
+    .product-item img {
+        height: 150px; /* Smaller images on mobile */
     }
 }
 
@@ -162,4 +179,76 @@ textarea {
     #mobileMenu {
         display: none !important;
     }
+}
+
+@media (max-width: 640px) {
+    /* Make the table more compact on mobile */
+    .table-auto {
+        font-size: 0.8rem;
+    }
+
+    /* Stack the table cells vertically on mobile */
+    .table-auto thead {
+        display: none;
+    }
+
+    .table-auto tr {
+        display: block;
+        margin-bottom: 1rem;
+        border: 1px solid #4a5568;
+    }
+
+    .table-auto td {
+        display: block;
+        text-align: right;
+        padding: 0.5rem;
+        border-bottom: 1px solid #4a5568;
+    }
+
+    .table-auto td:before {
+        content: attr(data-label);
+        float: left;
+        font-weight: bold;
+    }
+
+    /* Adjust action buttons */
+    .table-auto td:last-child {
+        border-bottom: none;
+    }
+
+    .table-auto td:last-child .flex {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+
+    /* Make buttons and selects full width */
+    .table-auto button,
+    .table-auto select {
+        width: 100%;
+        margin: 0.25rem 0;
+    }
+
+    /* Adjust total and checkout button */
+    #cart-total-container,
+    #checkout-form {
+        text-align: center;
+    }
+
+    #checkout-form button {
+        width: 100%;
+    }
+}
+
+/* Ensure the mobile menu doesn't cover the content */
+@media (max-width: 768px) {
+    #mobileMenu {
+        position: fixed;
+        top: 60px; /* Adjust based on your header height */
+        left: 0;
+        right: 0;
+        bottom: 0;
+        overflow-y: auto;
+        z-index: 50;
+    }
+    
 }

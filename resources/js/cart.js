@@ -98,9 +98,22 @@ function fetchCartCount() {
 }
 
 function updateCartCount(count) {
+    // Update desktop cart count
+    const desktopCartCount = document.querySelector('.cart-count');
+    if (desktopCartCount) {
+        desktopCartCount.textContent = count;
+    }
+    
+    // Update mobile cart count
+    const mobileCartCount = document.getElementById('mobileCartCount');
+    if (mobileCartCount) {
+        mobileCartCount.textContent = count;
+    }
+    
+    // Update the existing cart-count element
     const cartCountElement = document.getElementById('cart-count');
     if (cartCountElement) {
-        cartCountElement.innerText = count;
+        cartCountElement.textContent = count;
     }
 }
 

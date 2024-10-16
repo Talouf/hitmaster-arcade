@@ -1,12 +1,11 @@
 <!-- resources/views/layouts/footer.blade.php -->
 
-
 <div class="home_border_top"></div>
 <footer class="p-8 text-center mt-auto">
     <div class="container mx-auto">
         <form action="{{ route('newsletter.subscribe') }}" method="POST" class="mb-4">
             @csrf
-            <input type="email" name="email" placeholder="Votre Email" class="px-4 py-2 rounded" required>
+            <input type="email" name="email" placeholder="Votre Email" class="px-4 py-2 rounded text-gray-800 placeholder-gray-500" required>
             <button type="submit" class="ml-2 px-6 py-2 bg-red-600 text-white rounded">S'abonner</button>
         </form>
         @if (session('newsletter_success'))
@@ -31,5 +30,13 @@
 
     main {
         flex: 1;
+    }
+
+    footer input[type="email"] {
+        color: #333;
+    }
+
+    footer input[type="email"]::placeholder {
+        color: #666;
     }
 </style>

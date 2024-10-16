@@ -22,11 +22,6 @@ use App\Http\Controllers\NewsLetterController;
 use App\Http\Controllers\LanguageController;
 
 
-Route::get('/test-english', function () {
-    App::setLocale('en');
-    return view('welcome');
-});
-
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
 Route::get('/about', [AboutController::class, 'index'])->name('about');
@@ -36,6 +31,7 @@ Route::resource('products', ProductController::class);
 Route::get('/products', [ProductController::class, 'index'])->name('products.index');
 Route::get('/product/{id}', [ProductController::class, 'show'])->name('product.show');
 Route::get('/products/search', [ProductController::class, 'search'])->name('products.search');
+Route::get('/products/{product}/reviews', [ProductController::class, 'getReviews'])->name('products.reviews');
 Route::get('/contact', [ContactController::class, 'index'])->name('contact');
 Route::get('/news', [NewsController::class, 'index'])->name('news.index');
 Route::get('/news/{id}', [NewsController::class, 'show'])->name('news.show');

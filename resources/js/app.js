@@ -2,6 +2,7 @@ import './bootstrap';
 import Alpine from 'alpinejs';
 import './navigation';
 import './cart';
+import './product-lazy-load'
 
 window.Alpine = Alpine;
 Alpine.start();

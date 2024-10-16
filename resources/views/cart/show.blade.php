@@ -10,6 +10,7 @@
         @if($cartItems->isEmpty())
             <p class="text-lg">Votre panier est vide.</p>
         @else
+            <div class="overflow-x-auto">
                 <table class="table-auto w-full border border-gray-200">
                     <thead class="bg-gray-800 text-white">
                         <tr>
@@ -63,18 +64,37 @@
                         @endforeach
                     </tbody>
                 </table>
-                <p id="cart-total-container" class="text-lg mt-4">
-                    Total: $<span id="cart-total">{{ number_format($cartItems->sum(function ($item) {
-                return $item->quantity * $item->product->price;
-            }), 2) }}</span>
-                </p>
-                <form action="{{ route('cart.checkout') }}" method="POST" id="checkout-form" class="mt-4">
-                    @csrf
-                    <button type="submit" class="btn btn-primary bg-blue-500 text-white py-2 px-4 rounded">
-                        Proceed to Checkout
-                    </button>
-                </form>
+            </div>
+            <p id="cart-total-container" class="text-lg mt-4">
+                Total: $<span id="cart-total">{{ number_format($cartItems->sum(function ($item) {
+                    return $item->quantity * $item->product->price;
+                }), 2) }}</span>
+            </p>
+            <form action="{{ route('cart.checkout') }}" method="POST" id="checkout-form" class="mt-4">
+                @csrf
+                <button type="submit" class="btn btn-primary bg-blue-500 text-white py-2 px-4 rounded">
+                    Proceed to Checkout
+                </button>
+            </form>
         @endif
     </div>
 </div>
+
+<style>
+    @media (max-width: 640px) {
+        table {
+            font-size: 0.8rem;
+        }
+        th, td {
+            padding: 0.5rem 0.25rem;
+        }
+        .flex.items-center.justify-center {
+            flex-direction: column;
+        }
+        .flex.items-center.justify-center > * {
+            margin: 0.25rem 0;
+        }
+    }
+</style>
+
 @endsection

@@ -113,5 +113,20 @@ class ProductController extends Controller
         }
         return view('products.compare', compact('products'));
     }
+    public function getReviews(Request $request, Product $product)
+    {
+        $offset = $request->query('offset', 0);
+        $limit = $request->query('limit', 3);
+
+        $reviews = $product->reviews()
+            ->with('user')
+            ->skip($offset)
+            ->take($limit)
+            ->get();
+
+        return response()->json([
+            'reviews' => $reviews
+        ]);
+    }
 
 }
