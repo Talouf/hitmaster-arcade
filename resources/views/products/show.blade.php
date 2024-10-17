@@ -9,7 +9,8 @@
 
     @if($inStock)
         <p class="text-green-600 mb-4 text-sm">En stock: {{ $product->stock_quantity }} unités disponibles</p>
-        <button onclick="addToCart({{ $product->id }})" class="bg-blue-500 text-white px-4 py-2 rounded w-full max-w-md mx-auto block">Ajouter au panier</button>
+        <button onclick="addToCart({{ $product->id }})"
+            class="bg-blue-500 text-white px-4 py-2 rounded w-full max-w-md mx-auto block">Ajouter au panier</button>
     @else
         <p class="text-red-600 mb-4 text-sm">Rupture de stock</p>
     @endif
@@ -30,19 +31,23 @@
     </div>
     <div class="mt-4 flex justify-center space-x-4">
         @if ($product->reviews->count() > 3)
-            <button id="load-more-reviews" class="bg-gray-700 text-white px-4 py-2 rounded text-sm">Show More Reviews</button>
+            <button id="load-more-reviews" class="bg-gray-700 text-white px-4 py-2 rounded text-sm">Show More
+                Reviews</button>
         @endif
-        <button id="show-less-reviews" class="bg-gray-700 text-white px-4 py-2 rounded text-sm hidden">Show Less</button>
+        <button id="show-less-reviews" class="bg-gray-700 text-white px-4 py-2 rounded text-sm hidden">Show
+            Less</button>
     </div>
 </div>
 
 @auth
-    @if(Auth::user()->orders()->whereHas('orderItems', function ($query) use ($product) {
-        $query->where('product_id', $product->id);
-    })->exists())
+    @if(
+                Auth::user()->orders()->whereHas('orderItems', function ($query) use ($product) {
+                    $query->where('product_id', $product->id);
+                })->exists()
+            )
         <div class="mt-8 px-4 max-w-4xl mx-auto">
             <h3 class="text-xl font-bold mb-4 text-white">Write a Review</h3>
-            <form action="{{ route('reviews.store') }}" method="POST" class="bg-gray-800 p-4 rounded">
+            <form id="review-form" class="bg-gray-800 p-4 rounded">
                 @csrf
                 <input type="hidden" name="product_id" value="{{ $product->id }}">
                 <div class="mb-4">
@@ -55,10 +60,12 @@
                 </div>
                 <div class="mb-4">
                     <label for="content" class="block mb-2 text-sm text-gray-300">Review</label>
-                    <textarea name="content" id="content" rows="4" class="w-full p-2 border rounded bg-gray-700 text-white text-sm"></textarea>
+                    <textarea name="content" id="content" rows="4"
+                        class="w-full p-2 border rounded bg-gray-700 text-white text-sm"></textarea>
                 </div>
                 <button type="submit" class="bg-blue-500 text-white py-2 px-4 rounded text-sm w-full">Submit Review</button>
             </form>
+            <div id="review-message" class="mt-4 text-center"></div>
         </div>
     @endif
 @endauth
@@ -100,57 +107,93 @@
     }
 
     // Load more reviews functionality
-    document.addEventListener('DOMContentLoaded', function() {
-    const loadMoreButton = document.getElementById('load-more-reviews');
-    const showLessButton = document.getElementById('show-less-reviews');
-    const reviewsContainer = document.getElementById('reviews-container');
-    let offset = 3;
-    const limit = 3;
-    const initialReviewCount = {{ $product->reviews->count() }};
+    document.addEventListener('DOMContentLoaded', function () {
+        const loadMoreButton = document.getElementById('load-more-reviews');
+        const showLessButton = document.getElementById('show-less-reviews');
+        const reviewsContainer = document.getElementById('reviews-container');
+        let offset = 3;
+        const limit = 3;
+        const initialReviewCount = {{ $product->reviews->count() }};
 
-    function createReviewElement(review) {
-        const reviewElement = document.createElement('div');
-        reviewElement.className = 'bg-gray-800 p-3 rounded shadow';
-        reviewElement.innerHTML = `
+        function createReviewElement(review) {
+            const reviewElement = document.createElement('div');
+            reviewElement.className = 'bg-gray-800 p-3 rounded shadow';
+            reviewElement.innerHTML = `
             <p class="mb-2 text-sm text-gray-300">${review.content.length > 150 ? review.content.substring(0, 150) + '...' : review.content}</p>
             <div class="flex justify-between items-center text-xs text-gray-400">
                 <span>${review.user.name}</span>
                 <span>Rating: ${review.rating}/5</span>
             </div>
         `;
-        return reviewElement;
-    }
+            return reviewElement;
+        }
 
-    if (loadMoreButton) {
-        loadMoreButton.addEventListener('click', function() {
-            fetch(`/products/{{ $product->id }}/reviews?offset=${offset}&limit=${limit}`)
-                .then(response => response.json())
-                .then(data => {
-                    data.reviews.forEach(review => {
-                        reviewsContainer.appendChild(createReviewElement(review));
-                    });
+        if (loadMoreButton) {
+            loadMoreButton.addEventListener('click', function () {
+                fetch(`/products/{{ $product->id }}/reviews?offset=${offset}&limit=${limit}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        data.reviews.forEach(review => {
+                            reviewsContainer.appendChild(createReviewElement(review));
+                        });
 
-                    offset += limit;
-                    if (offset >= initialReviewCount) {
-                        loadMoreButton.style.display = 'none';
-                    }
-                    showLessButton.classList.remove('hidden');
+                        offset += limit;
+                        if (offset >= initialReviewCount) {
+                            loadMoreButton.style.display = 'none';
+                        }
+                        showLessButton.classList.remove('hidden');
+                    })
+                    .catch(error => console.error('Error:', error));
+            });
+        }
+
+        if (showLessButton) {
+            showLessButton.addEventListener('click', function () {
+                const reviews = reviewsContainer.children;
+                for (let i = reviews.length - 1; i >= 3; i--) {
+                    reviews[i].remove();
+                }
+                offset = 3;
+                loadMoreButton.style.display = 'inline-block';
+                showLessButton.classList.add('hidden');
+            });
+        }
+    });
+    document.addEventListener('DOMContentLoaded', function () {
+        const form = document.getElementById('review-form');
+        const messageDiv = document.getElementById('review-message');
+
+        if (form) {
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                const formData = new FormData(form);
+
+                fetch('{{ route('reviews.store') }}', {
+                    method: 'POST',
+                    body: formData,
+                    headers: {
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}',
+                        'Accept': 'application/json',
+                    },
                 })
-                .catch(error => console.error('Error:', error));
-        });
-    }
-
-    if (showLessButton) {
-        showLessButton.addEventListener('click', function() {
-            const reviews = reviewsContainer.children;
-            for (let i = reviews.length - 1; i >= 3; i--) {
-                reviews[i].remove();
-            }
-            offset = 3;
-            loadMoreButton.style.display = 'inline-block';
-            showLessButton.classList.add('hidden');
-        });
-    }
-});
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.message) {
+                            messageDiv.textContent = data.message;
+                            messageDiv.className = 'mt-4 text-center text-green-500';
+                            form.reset();
+                        } else if (data.error) {
+                            messageDiv.textContent = data.error;
+                            messageDiv.className = 'mt-4 text-center text-red-500';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error:', error);
+                        messageDiv.textContent = 'An error occurred. Please try again.';
+                        messageDiv.className = 'mt-4 text-center text-red-500';
+                    });
+            });
+        }
+    });
 </script>
 @endsection

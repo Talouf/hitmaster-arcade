@@ -31,4 +31,8 @@ return [
     'latest_news' => 'Latest News',
     'continue_reading' => 'Continue reading',
     'view_all' => 'View All',
+    'search_results_for' => 'Search results for',
+    'view_product' => 'View Product',
+    'no_products_found' => 'No products found.',
+    'no_news_found' => 'No news found.',
 ];
