@@ -50,12 +50,11 @@ class News extends Model
 
     public function getImageUrlAttribute()
     {
-        if ($this->image && Storage::disk('public')->exists($this->image)) {
-            return asset('storage/' . $this->image);
+        if ($this->image && file_exists(public_path($this->image))) {
+            return asset($this->image);
         }
-        return asset('images/default-image.png'); // Adjust this path as needed
+        return asset('images/default-image.png');
     }
-
     public function getExcerptAttribute($length = 100)
     {
         return Str::limit(strip_tags($this->localized_content), $length);

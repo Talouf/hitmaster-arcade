@@ -11,28 +11,29 @@ class NewsController extends Controller
 {
     public function index()
     {
-        Log::info("NewsController index method called. Current locale: " . App::getLocale());
-        $news = News::published()->orderBy('post_date', 'desc')->paginate(10);
-        Log::info("News items retrieved: " . $news->count());
+        $news = News::latest()->paginate(10);
+        foreach ($news as $newsItem) {
+            Log::info('News item: ' . $newsItem->id . ', Image path: ' . $newsItem->image . ', Image URL: ' . $newsItem->image_url);
+        }
         return view('news.index', compact('news'));
     }
 
     public function show($id)
     {
         $newsItem = News::findOrFail($id);
-        
+
         $previousNews = News::where('post_date', '<', $newsItem->post_date)
-                            ->orderBy('post_date', 'desc')
-                            ->first();
-        
+            ->orderBy('post_date', 'desc')
+            ->first();
+
         $nextNews = News::where('post_date', '>', $newsItem->post_date)
-                        ->orderBy('post_date', 'asc')
-                        ->first();
-        
+            ->orderBy('post_date', 'asc')
+            ->first();
+
         $relatedNews = News::where('id', '!=', $newsItem->id)
-                           ->inRandomOrder()
-                           ->limit(3)
-                           ->get();
+            ->inRandomOrder()
+            ->limit(3)
+            ->get();
 
         return view('news.show', compact('newsItem', 'previousNews', 'nextNews', 'relatedNews'));
     }

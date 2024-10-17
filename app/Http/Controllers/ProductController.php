@@ -8,11 +8,10 @@ use Illuminate\Http\Request;
 class ProductController extends Controller
 {
     public function index()
-    {
-        $products = Product::where('stock_quantity', '>', 0)->get();
-        return view('products.index', compact('products'));
-    }
-
+{
+    $products = Product::all(); 
+    return view('products.index', compact('products'));
+}
     public function show($id)
     {
         $product = Product::with('reviews')->findOrFail($id);
@@ -58,11 +57,11 @@ class ProductController extends Controller
             'name' => $request->name,
             'description' => $request->description,
             'price' => $request->price,
-            'image' => 'images/' . $imageName,
+            'image' => 'images/' . $imageName,  // Make sure this path is correct
             'stock_quantity' => $request->stock_quantity,
         ]);
 
-        return redirect()->route('products.index')->with('success', 'Product created successfully.');
+        return redirect()->route('admin.products.index')->with('success', 'Product created successfully.');
     }
 
     public function edit($id)
@@ -87,7 +86,7 @@ class ProductController extends Controller
         if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('images'), $imageName);
-            $product->image = 'images/' . $imageName;
+            $product->image = 'images/' . $imageName;  // Make sure this path is correct
             $product->save();
         }
 

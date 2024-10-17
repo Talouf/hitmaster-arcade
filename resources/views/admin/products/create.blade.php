@@ -21,8 +21,16 @@
             <textarea name="description" id="description" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-indigo-500" required></textarea>
         </div>
         <div class="mb-4">
+            <label for="details" class="block text-gray-300 text-sm font-bold mb-2">Details</label>
+            <textarea name="details" id="details" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-indigo-500"></textarea>
+        </div>
+        <div class="mb-4">
             <label for="price" class="block text-gray-300 text-sm font-bold mb-2">Price</label>
-            <input type="number" name="price" id="price" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-indigo-500" required>
+            <input type="number" step="0.01" name="price" id="price" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-indigo-500" required>
+        </div>
+        <div class="mb-4">
+            <label for="stock_quantity" class="block text-gray-300 text-sm font-bold mb-2">Stock Quantity</label>
+            <input type="number" name="stock_quantity" id="stock_quantity" class="w-full bg-gray-700 text-white border border-gray-600 rounded py-2 px-3 focus:outline-none focus:border-indigo-500" required>
         </div>
         <div class="mb-4">
             <label for="image" class="block text-gray-300 text-sm font-bold mb-2">Image</label>

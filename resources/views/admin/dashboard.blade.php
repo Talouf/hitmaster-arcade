@@ -61,21 +61,24 @@
                     </tr>
                 </thead>
                 <tbody class="bg-gray-800">
-                    @foreach($news as $newsItem)
-                        <tr class="border-b border-gray-700">
-                            <td class="py-4 px-4 whitespace-nowrap">{{ $newsItem->id }}</td>
-                            <td class="py-4 px-4">{{ $newsItem->title }}</td>
-                            <td class="py-4 px-4 whitespace-nowrap">
-                                <a href="{{ route('admin.news.edit', $newsItem->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded text-sm mr-2">Edit</a>
-                                <form action="{{ route('admin.news.delete', $newsItem->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure?');">
-                                    @csrf
-                                    @method('DELETE')
-                                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-sm">Delete</button>
-                                </form>
-                            </td>
-                        </tr>
-                    @endforeach
-                </tbody>
+    @foreach($news as $newsItem)
+        <tr class="border-b border-gray-700">
+            <td class="py-4 px-4 whitespace-nowrap">{{ $newsItem->id }}</td>
+            <td class="py-4 px-4">
+                EN: {{ $newsItem->title_en }}<br>
+                FR: {{ $newsItem->title_fr }}
+            </td>
+            <td class="py-4 px-4 whitespace-nowrap">
+                <a href="{{ route('admin.news.edit', $newsItem->id) }}" class="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded text-sm mr-2">Edit</a>
+                <form action="{{ route('admin.news.delete', $newsItem->id) }}" method="POST" class="inline" onsubmit="return confirm('Are you sure?');">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded text-sm">Delete</button>
+                </form>
+            </td>
+        </tr>
+    @endforeach
+</tbody>
             </table>
         </div>
     </div>

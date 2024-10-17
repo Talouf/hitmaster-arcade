@@ -13,11 +13,23 @@
                         class="w-full object-cover shadow-lg mb-4"
                         style="box-shadow: inset -20px -18px 20px 0px rgba(230, 57, 70, 0.5)8">
                     <h3 class="text-xl mt-2 text-white">{{ $product->name }} - {{ $product->price }}€</h3>
+                    <p class="text-sm mt-1 text-gray-400">
+                        @if($product->stock_quantity > 0)
+                            En stock: {{ $product->stock_quantity }}
+                        @else
+                            <span class="text-red-500">Rupture de stock</span>
+                        @endif
+                    </p>
                     <a href="{{ route('product.show', $product->id) }}"
                         class="mt-2 block px-4 py-2 bg-red-600 text-white rounded text-center">Voir Produit</a>
                     <button onclick="addToCart({{ $product->id }}, event)"
-                        class="mt-2 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-                        Ajouter au Panier
+                        class="mt-2 w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded"
+                        @if($product->stock_quantity == 0) disabled @endif>
+                        @if($product->stock_quantity > 0)
+                            Ajouter au Panier
+                        @else
+                            Indisponible
+                        @endif
                     </button>
                     <div class="mt-2 flex items-center">
                         <input type="checkbox" name="product[]" value="{{ $product->id }}" id="compare_{{ $product->id }}" class="mr-2">

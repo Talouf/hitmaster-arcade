@@ -22,27 +22,31 @@ class AdminController extends Controller
         return view('admin.news.create');
     }
 
-            public function storeNews(Request $request)
-            {
-                $request->validate([
-                    'title' => 'required|string|max:255',
-                    'content' => 'required',
-                    'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:2048',
-                ]);
+    public function storeNews(Request $request)
+    {
+        $request->validate([
+            'title_en' => 'required|string|max:255',
+            'title_fr' => 'required|string|max:255',
+            'content_en' => 'required',
+            'content_fr' => 'required',
+            'post_date' => 'required|date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+        ]);
 
-                $imageName = time() . '.' . $request->image->extension();
-                $request->image->move(public_path('images'), $imageName);
+        $news = new News($request->except('image'));
+        $news->admin_id = Auth::id();
 
-                News::create([
-                    'title' => $request->title,
-                    'content' => $request->input('content'),
-                    'image' => $imageName,
-                    'admin_id' => Auth::id(),
-                    'post_date' => now(),
-                ]);
+        if ($request->hasFile('image')) {
+            $imageName = time() . '.' . $request->image->extension();
+            $request->image->move(public_path('images'), $imageName);
+            $news->image = 'images/' . $imageName;
+        }
 
-                return redirect()->route('news.index')->with('success', 'News created successfully.');
-            }
+        $news->save(); // Add this line to save the news item
+
+        return redirect()->route('admin.dashboard')->with('success', 'News created successfully.');
+    }
+
 
     public function deleteNews($id)
     {
@@ -60,31 +64,29 @@ class AdminController extends Controller
 
     public function storeProduct(Request $request)
     {
-        // Added image validation and upload logic
         $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'required|string',
+            'details' => 'nullable|string',
             'price' => 'required|numeric',
             'stock_quantity' => 'required|integer|min:0',
             'image' => 'required|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
-        // Image handling
         $imageName = time() . '.' . $request->image->extension();
         $request->image->move(public_path('images'), $imageName);
 
-        // Creating product
         Product::create([
             'name' => $request->name,
             'description' => $request->description,
+            'details' => $request->details,
             'price' => $request->price,
-            'image' => $imageName,  // Storing the image path in the product
+            'image' => 'images/' . $imageName,
             'stock_quantity' => $request->stock_quantity,
         ]);
 
         return redirect()->route('products.index')->with('success', 'Product created successfully.');
     }
-
     public function deleteProduct($id)
     {
         $product = Product::findOrFail($id);
@@ -101,23 +103,26 @@ class AdminController extends Controller
 
     public function updateNews(Request $request, $id)
     {
+        $news = News::findOrFail($id);
+
         $request->validate([
-            'title' => 'required|string|max:255',
-            'content' => 'required',
-            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'title_en' => 'required|string|max:255',
+            'title_fr' => 'required|string|max:255',
+            'content_en' => 'required',
+            'content_fr' => 'required',
+            'post_date' => 'required|date',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
         ]);
 
-        $news = News::findOrFail($id);
-        $news->title = $request->title;
-        $news->content = $request->input('content');
+        $news->fill($request->except('image'));
 
         if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->image->extension();
             $request->image->move(public_path('images'), $imageName);
-            $news->image = $imageName;
+            $news->image = 'images/' . $imageName;
         }
 
-        $news->save();
+        $news->save();  // Add this line to save the changes
 
         return redirect()->route('admin.dashboard')->with('success', 'News updated successfully.');
     }
@@ -132,17 +137,15 @@ class AdminController extends Controller
     {
         $request->validate([
             'name' => 'required|string|max:255',
-            'description' => 'required',
+            'description' => 'required|string',
+            'details' => 'nullable|string',
             'price' => 'required|numeric',
             'stock_quantity' => 'required|integer|min:0',
-            'image' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
 
         $product = Product::findOrFail($id);
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->stock_quantity = $request->stock_quantity;
+        $product->fill($request->except('image'));
 
         if ($request->hasFile('image')) {
             $imageName = time() . '.' . $request->image->extension();
@@ -152,7 +155,7 @@ class AdminController extends Controller
 
         $product->save();
 
-        return redirect()->route('admin.dashboard')->with('success', 'Product updated successfully.');
+        return redirect()->route('products.index')->with('success', 'Product updated successfully.');
     }
 
     // New methods for order management
