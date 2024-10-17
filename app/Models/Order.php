@@ -35,6 +35,11 @@ class Order extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function shippingInfo()
+    {
+        return $this->hasOne(ShippingInfo::class);
+    }
+
     public function placeOrder(Request $request)
     {
         $user = Auth::user();

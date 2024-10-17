@@ -1,5 +1,5 @@
 @extends('layouts.app')
-
+<x-localize />
 @section('content')
 
 <!-- Derniers Produits -->
@@ -34,30 +34,30 @@
 <!-- Dernières News -->
 <div class="home_border_top"></div>
 <section class="py-16 text-center">
-    <h2 class="text-4xl font-bold text-white"
-        style="font-family: 'Montserrat', sans-serif; font-weight: 700; font-size: 36px;">Dernières News</h2>
-    <div class="mt-8 flex flex-wrap justify-center">
-        @foreach ($latestNews as $news)
-            <div class="p-4 w-full sm:w-1/2 md:w-1/3 lg:w-1/4 news-item">
-                <div class="bg-gray-800 rounded-lg overflow-hidden h-full flex flex-col">
-                    <img src="{{ $news->image ? asset('images/' . $news->image) : asset('images/default-image.png') }}"
-                        alt="{{ htmlspecialchars($news->title) }}" class="w-full h-48 object-cover">
-                    <div class="p-4 flex-grow flex flex-col justify-between">
-                        <h3 class="text-xl text-white mb-2" style="font-family: 'Roboto', sans-serif; font-weight: 400;">
-                            {{ htmlspecialchars($news->title) }}
-                        </h3>
-                        <p class="mt-2 text-red-600">
-                            <a href="{{ route('news.show', $news->id) }}" class="hover:underline">Continuer la lecture
-                                &raquo;</a>
-                        </p>
+    <div class="container mx-auto px-4">
+        <h2 class="text-4xl font-bold text-white mb-8" style="font-family: 'Montserrat', sans-serif;">Dernières actualités</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+            @foreach ($latestNews as $news)
+                <div class="bg-gray-800 rounded-lg overflow-hidden shadow-lg flex flex-col">
+                    <img src="{{ $news->image_url ?: asset('images/default-news-image.jpg') }}"
+                         alt="{{ $news->localized_title }}"
+                         class="w-full h-48 object-cover">
+                    <div class="p-6 flex-grow flex flex-col justify-between">
+                        <div>
+                            <h3 class="text-xl font-semibold text-white mb-2">{{ $news->localized_title }}</h3>
+                            <p class="text-gray-400 mb-4">{{ Str::limit($news->localized_content, 100) }}</p>
+                        </div>
+                        <a href="{{ route('news.show', $news->id) }}" class="text-red-500 hover:text-red-400 mt-4 inline-block">
+                            Continuer la lecture &raquo;
+                        </a>
                     </div>
                 </div>
-            </div>
-        @endforeach
+            @endforeach
+        </div>
+        <a href="{{ route('news.index') }}" class="mt-12 inline-block px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition duration-300">
+            Voir tout
+        </a>
     </div>
-    <a href="{{ route('news.index') }}"
-        class="mt-8 inline-block px-6 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition duration-300">VOIR
-        TOUT</a>
 </section>
 
 <!-- Avis de nos clients -->

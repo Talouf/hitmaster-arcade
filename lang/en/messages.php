@@ -23,4 +23,12 @@ return [
     'language' => 'Language',
     'english' => 'English',
     'french' => 'French',
+    'read_more' => 'Read More',
+    'posted_by' => 'Posted by',
+    'previous_news' => 'Previous News',
+    'next_news' => 'Next News',
+    'related_news' => 'Related News',
+    'latest_news' => 'Latest News',
+    'continue_reading' => 'Continue reading',
+    'view_all' => 'View All',
 ];

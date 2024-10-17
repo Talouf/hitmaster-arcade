@@ -31,6 +31,15 @@
             @method('PATCH')
 
             <div class="mb-4">
+                <label for="nickname" class="block text-white font-semibold">Pseudo</label>
+                <input type="text" name="nickname" id="nickname" value="{{ old('nickname', $user->nickname) }}"
+                    class="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white">
+                @error('nickname')
+                    <span class="text-red-500">{{ $message }}</span>
+                @enderror
+            </div>
+
+            <div class="mb-4">
                 <label for="name" class="block text-white font-semibold">Nom de famille</label>
                 <input type="text" name="name" id="name" value="{{ old('name', $user->name) }}"
                     class="w-full p-2 border border-gray-600 rounded bg-gray-700 text-white">
@@ -192,6 +201,20 @@
             x[i].style.display = "none";
         }
         document.getElementById(tabName).style.display = "block";
+
+        // Update active tab styling
+        var tabButtons = document.getElementsByClassName("tab-button");
+        for (i = 0; i < tabButtons.length; i++) {
+            tabButtons[i].classList.remove("bg-red-600");
+            tabButtons[i].classList.add("bg-red-500");
+        }
+        event.currentTarget.classList.remove("bg-red-500");
+        event.currentTarget.classList.add("bg-red-600");
     }
+
+    // Show the profile tab by default
+    document.addEventListener('DOMContentLoaded', (event) => {
+        showTab('profile');
+    });
 </script>
 @endsection

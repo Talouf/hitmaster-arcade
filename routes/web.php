@@ -8,6 +8,7 @@ use App\Http\Controllers\ProductController;
 use App\Http\Controllers\ContactController;
 use App\Http\Controllers\AboutController;
 use App\Http\Controllers\SearchController;
+use App\Http\Controllers\SocialController;
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AdminAuthController;
 use App\Http\Controllers\PaymentController;
@@ -20,7 +21,7 @@ use App\Http\Controllers\OrderController;
 use App\Http\Controllers\AdminDashboardController;
 use App\Http\Controllers\NewsLetterController;
 use App\Http\Controllers\LanguageController;
-
+use App\Http\Controllers\FaqController;
 
 // Public routes
 Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -39,6 +40,10 @@ Route::get('/search', [SearchController::class, 'search'])->name('search');
 Route::post('/newsletter/subscribe', [NewsLetterController::class, 'subscribe'])->name('newsletter.subscribe');
 Route::get('/newsletter/unsubscribe/{token}', [NewsLetterController::class, 'unsubscribe'])->name('newsletter.unsubscribe');
 Route::post('/newsletter/toggle', [NewsLetterController::class, 'toggleSubscription'])->name('newsletter.toggle')->middleware('auth');
+Route::get('/faq', [FaqController::class, 'index'])->name('faq');
+Route::get('/social/facebook', [SocialController::class, 'facebook'])->name('social.facebook');
+Route::get('/social/twitter', [SocialController::class, 'twitter'])->name('social.twitter');
+Route::get('/social/instagram', [SocialController::class, 'instagram'])->name('social.instagram');
 
 // Language switch route
 Route::get('lang/{lang}', [LanguageController::class, 'switchLanguage'])->name('lang.switch');

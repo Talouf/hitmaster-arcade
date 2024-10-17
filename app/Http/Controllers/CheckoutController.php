@@ -65,21 +65,54 @@ class CheckoutController extends Controller
         return $this->initiateStripeCheckout($shippingInfo->id);
     }
 
-    private function initiateStripeCheckout($shippingInfoId)
+    private function initiateStripeCheckout($shippingInfoId = null)
     {
         Stripe::setApiKey(env('STRIPE_SECRET'));
 
+        $user = auth()->user();
         $cartItems = $this->getCartItems();
         $lineItems = $this->prepareLineItems($cartItems);
 
-        $session = StripeSession::create([
+        $sessionParams = [
             'payment_method_types' => ['card'],
             'line_items' => $lineItems,
             'mode' => 'payment',
             'success_url' => route('checkout.success') . '?session_id={CHECKOUT_SESSION_ID}',
             'cancel_url' => route('checkout.cancel'),
-            'client_reference_id' => $shippingInfoId,
-        ]);
+        ];
+
+        if ($user) {
+            $sessionParams['customer_email'] = $user->email;
+
+            $shippingAddresses = $user->shippingAddresses;
+            if ($shippingAddresses->isNotEmpty()) {
+                $sessionParams['shipping_address_collection'] = [
+                    'allowed_countries' => ['US', 'CA', 'GB', 'FR', 'DE', 'IT', 'ES', 'NL', 'BE', 'CH', 'AT', 'SE', 'DK', 'FI', 'NO', 'IE'],
+                ];
+
+                // If a specific shipping address is selected
+                if ($shippingInfoId) {
+                    $selectedAddress = $shippingAddresses->find($shippingInfoId);
+                    if ($selectedAddress) {
+                        $sessionParams['shipping_options'] = [
+                            [
+                                'shipping_rate_data' => [
+                                    'type' => 'fixed_amount',
+                                    'fixed_amount' => ['amount' => 0, 'currency' => 'usd'],
+                                    'display_name' => 'Free shipping',
+                                    'delivery_estimate' => [
+                                        'minimum' => ['unit' => 'business_day', 'value' => 5],
+                                        'maximum' => ['unit' => 'business_day', 'value' => 7],
+                                    ],
+                                ],
+                            ],
+                        ];
+                    }
+                }
+            }
+        }
+
+        $session = StripeSession::create($sessionParams);
 
         return redirect($session->url);
     }
@@ -132,6 +165,7 @@ class CheckoutController extends Controller
         }
     }*/
 
+
     public function success(Request $request)
     {
         try {
@@ -146,8 +180,10 @@ class CheckoutController extends Controller
 
             $session = StripeSession::retrieve($sessionId);
 
+            Log::info('Full Stripe session details: ' . json_encode($session));
+
             $customer_email = $session->customer_details->email;
-            $shipping = $session->shipping_details;
+            $shipping = $session->shipping_details ?? $session->customer_details;
 
             Log::info('Shipping details: ' . json_encode($shipping));
 
@@ -170,19 +206,31 @@ class CheckoutController extends Controller
             return redirect()->route('checkout.failed')->with('error', 'An error occurred while processing your order.');
         }
     }
-
     private function placeOrder($session, $user = null)
     {
+        $shippingDetails = $session->shipping_details ?? $session->customer_details;
+
         $order = Order::create([
             'user_id' => $user ? $user->id : null,
             'guest_email' => $user ? null : $session->customer_details->email,
             'order_date' => now(),
             'total_price' => $session->amount_total / 100,
-            'status' => 'paid'
+            'status' => 'paid',
         ]);
 
         Log::info('Order created', ['order_id' => $order->id]);
-
+        $shippingDetails = $session->shipping_details ?? $session->customer_details;
+        if ($shippingDetails && $shippingDetails->address) {
+            ShippingInfo::create([
+                'order_id' => $order->id,
+                'name' => $shippingDetails->name,
+                'address' => $shippingDetails->address->line1,
+                'city' => $shippingDetails->address->city,
+                'state' => $shippingDetails->address->state,
+                'zip_code' => $shippingDetails->address->postal_code,
+                'country' => $shippingDetails->address->country,
+            ]);
+        }
         $cartId = Session::get('cart_id');
         $orderItems = OrderItem::where('order_id', $cartId)
             ->where('is_ordered', false)
@@ -201,19 +249,21 @@ class CheckoutController extends Controller
 
         return $order;
     }
-
     private function saveShippingInfo($order, $shipping)
     {
-        $shippingInfo = new ShippingInfo();
-        $shippingInfo->order_id = $order->id;
-        $shippingInfo->address = $shipping->address->line1;
-        $shippingInfo->city = $shipping->address->city;
-        $shippingInfo->state = $shipping->address->state;
-        $shippingInfo->zip_code = $shipping->address->postal_code;
-        $shippingInfo->country = $shipping->address->country;
-        $shippingInfo->save();
+        ShippingInfo::updateOrCreate(
+            ['order_id' => $order->id],
+            [
+                'name' => $shipping->name,
+                'address' => $shipping->address->line1,
+                'city' => $shipping->address->city,
+                'state' => $shipping->address->state,
+                'zip_code' => $shipping->address->postal_code,
+                'country' => $shipping->address->country,
+                'user_id' => $order->user_id, // Assuming you want to associate with the user as well
+            ]
+        );
     }
-
     private function createPayment($order, $session)
     {
         Payment::create([

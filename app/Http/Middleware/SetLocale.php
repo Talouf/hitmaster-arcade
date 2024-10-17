@@ -12,9 +12,23 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next)
     {
-        $locale = Session::get('applocale', config('app.locale'));
+        $sessionLocale = Session::get('applocale');
+        $configLocale = config('app.locale');
+
+        $locale = $sessionLocale ?: $configLocale;
+
+        // Ensure the locale is valid
+        if (!in_array($locale, ['en', 'fr'])) {
+            $locale = $configLocale;
+        }
+
+        Log::info("SetLocale Middleware - Request URL: " . $request->fullUrl());
+        Log::info("SetLocale Middleware - Session Locale: " . ($sessionLocale ?: 'not set'));
+        Log::info("SetLocale Middleware - Config Locale: " . $configLocale);
+        Log::info("SetLocale Middleware - Setting locale to: " . $locale);
+
         App::setLocale($locale);
-        Log::info("SetLocale Middleware - App Locale set to: " . App::getLocale());
+        Session::put('applocale', $locale);
 
         return $next($request);
     }

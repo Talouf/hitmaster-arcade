@@ -12,17 +12,17 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\View\View;
 use App\Models\User;
 
-
 class ProfileController extends Controller
 {
     public function edit()
     {
         $user = Auth::user();
         $shippingInfos = $user->shippingInfos;
-        $orders = $user->orders()->latest()->get();  // Add this line
+        $orders = $user->orders()->latest()->get();
 
         return view('profile.edit', compact('user', 'shippingInfos', 'orders'));
     }
+
     public function register(Request $request)
     {
         $request->validate([
@@ -37,7 +37,6 @@ class ProfileController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        // Associate any existing guest orders with the new user account
         Order::where('guest_email', $request->email)
             ->update([
                 'user_id' => $user->id,
@@ -48,6 +47,7 @@ class ProfileController extends Controller
 
         return redirect()->route('profile.edit')->with('status', 'Account created successfully.');
     }
+
     public function update(Request $request)
     {
         $request->validate([

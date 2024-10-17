@@ -13,9 +13,20 @@
         @endif
         <p class="text-gray-400">HitMaster Arcade</p>
         <div class="mt-4 flex justify-center space-x-4">
-            <a href="#" class="text-gray-400 hover:text-white">FAQ</a>
+            <a href="{{ route('faq') }}" class="text-gray-400 hover:text-white">FAQ</a>
             <a href="{{ route('about') }}" class="text-gray-400 hover:text-white">À propos de nous</a>
             <a href="{{ route('mentions') }}" class="text-gray-400 hover:text-white">Mentions Légales</a>
+        </div>
+        <div class="mt-4 flex justify-center space-x-6">
+            <a href="{{ route('social.facebook') }}" class="text-gray-400 hover:text-white">
+                <i class="fab fa-facebook-f"></i>
+            </a>
+            <a href="{{ route('social.twitter') }}" class="text-gray-400 hover:text-white">
+                <i class="fab fa-twitter"></i>
+            </a>
+            <a href="{{ route('social.instagram') }}" class="text-gray-400 hover:text-white">
+                <i class="fab fa-instagram"></i>
+            </a>
         </div>
         <p class="mt-4 text-gray-400">2024, HitMaster Arcade</p>
     </div>

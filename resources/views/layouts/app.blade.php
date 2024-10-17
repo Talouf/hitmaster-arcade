@@ -1,9 +1,4 @@
-<?php
-use Illuminate\Support\Facades\App;
-use Illuminate\Support\Facades\Session;
-
-App::setLocale(Session::get('applocale', config('app.locale')));
-?>
+<x-localize />
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 
@@ -16,6 +11,7 @@ App::setLocale(Session::get('applocale', config('app.locale')));
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@700&family=Roboto:wght@400&display=swap"
         rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">   
     <style>
         body {
             font-family: 'Roboto', sans-serif;

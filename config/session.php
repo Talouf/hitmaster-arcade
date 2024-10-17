@@ -7,14 +7,14 @@ return [
 
     // User session configuration
     'user' => [
-        'driver' => 'database',
+        'driver' => env('SESSION_DRIVER', 'database'),
         'table' => 'sessions',
         'lottery' => [2, 100],
     ],
 
     // Admin session configuration
     'admin' => [
-        'driver' => 'database',
+        'driver' => env('SESSION_DRIVER', 'database'),
         'table' => 'admin_sessions',
         'lottery' => [2, 100],
     ],

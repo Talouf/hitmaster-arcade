@@ -8,9 +8,13 @@ use Illuminate\Database\Eloquent\Model;
 class ShippingInfo extends Model
 {
     use HasFactory;
-    protected $table = 'shipping_info';
+
+    protected $table = 'shipping_info'; // Explicitly set the table name
+
     protected $fillable = [
         'user_id',
+        'order_id',
+        'name',
         'address',
         'city',
         'state',
@@ -23,4 +27,8 @@ class ShippingInfo extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 }

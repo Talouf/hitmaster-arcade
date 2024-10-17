@@ -60,4 +60,13 @@ class User extends Authenticatable
             $subscription->save();
         }
     }
+    public function shippingAddresses()
+    {
+        return $this->hasMany(ShippingInfo::class);
+    }
+
+    public function defaultShippingAddress()
+    {
+        return $this->hasOne(ShippingInfo::class)->where('is_default', true);
+    }
 }

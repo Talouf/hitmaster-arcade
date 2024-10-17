@@ -8,7 +8,7 @@
     <div class="hidden md:block overflow-x-auto">
         <table class="w-full table-auto">
             <thead>
-                <tr class="bg-gray-200">
+                <tr class="bg-gray-800">
                     <th class="px-4 py-2">Caractéristique</th>
                     @foreach ($products as $product)
                         <th class="px-4 py-2">{{ $product->name }}</th>

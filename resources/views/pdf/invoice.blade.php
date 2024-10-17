@@ -4,12 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Invoice #{{ $order->id }}</title>
+    <title>Facture #{{ $order->id }}</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
             line-height: 1.6;
             color: #333;
+            margin: 0;
+            padding: 0;
         }
 
         .invoice-box {
@@ -18,12 +20,14 @@
             padding: 30px;
             border: 1px solid #eee;
             box-shadow: 0 0 10px rgba(0, 0, 0, .15);
+            background-color: #fff;
         }
 
         .invoice-box table {
             width: 100%;
             line-height: inherit;
             text-align: left;
+            border-collapse: collapse;
         }
 
         .invoice-box table td {
@@ -50,19 +54,17 @@
             font-weight: bold;
         }
 
-        @media only screen and (max-width: 600px) {
-            .invoice-box table tr.top table td {
-                width: 100%;
-                display: block;
-                text-align: center;
-            }
-        }
-
         .footer {
-            margin-top: 50px;
+            margin-top: 30px;
             text-align: center;
             font-size: 12px;
             color: #777;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #e53e3e;
         }
     </style>
 </head>
@@ -75,14 +77,16 @@
                     <table>
                         <tr>
                             <td>
-                                <h1>Invoice #{{ $order->id }}</h1>
-                                Created: {{ $order->created_at->format('F d, Y') }}<br>
-                                Due: {{ $order->created_at->addDays(30)->format('F d, Y') }}<br>
-                                VAT ID: [Your Company VAT ID]<br>
-                                Payment Terms: 30 days
+                                <span class="logo">HitMaster Arcade</span><br>
+                                123 Rue de l'Innovation<br>
+                                75001 Paris, France<br>
+                                Téléphone: +33 1 23 45 67 89<br>
+                                Email: contact@hitmasterarcade.com
                             </td>
                             <td style="text-align: right;">
-                                <img src="{{ public_path('images/hitmaster.png') }}" style="width:100px;">
+                                <h1>Facture #{{ $order->id }}</h1>
+                                Date d'émission: {{ $order->created_at->format('d/m/Y') }}<br>
+                                Date d'échéance: {{ $order->created_at->addDays(30)->format('d/m/Y') }}
                             </td>
                         </tr>
                     </table>
@@ -90,64 +94,62 @@
             </tr>
 
             <tr class="information">
-                <td colspan="2">
-                    <table>
-                        <tr>
-                            <td>
-                                Your Company Name<br>
-                                123 Company Address<br>
-                                City, State ZIP<br>
-                                Bank: [Your Bank Info]<br>
-                                IBAN: [Your IBAN]
-                            </td>
-                            <td style="text-align: right;">
-                                {{ $order->user->name }}<br>
-                                {{ $order->user->email }}<br>
-                                Shipping Address: [User's Shipping Address]
-                            </td>
-                        </tr>
-                    </table>
-                </td>
-            </tr>
+            <td colspan="2">
+                <table>
+                    <tr>
+                        <td style="text-align: right;">
+                            <strong>Livrer à:</strong><br>
+                            @if($order->shippingInfo)
+                                {{ $order->shippingInfo->name }}<br>
+                                {{ $order->shippingInfo->address }}<br>
+                                {{ $order->shippingInfo->city }}, {{ $order->shippingInfo->zip_code }}<br>
+                                @if($order->shippingInfo->state)
+                                    {{ $order->shippingInfo->state }},
+                                @endif
+                                {{ $order->shippingInfo->country }}
+                            @else
+                                Adresse de livraison non disponible
+                            @endif
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
 
             <tr class="heading">
-                <td>Item</td>
-                <td>Price</td>
+                <td>Description</td>
+                <td>Montant</td>
             </tr>
 
             @foreach($order->orderItems as $item)
                 <tr class="item">
                     <td>{{ $item->product->name }} (x{{ $item->quantity }})</td>
-                    <td>€{{ number_format($item->price * $item->quantity, 2) }}</td>
+                    <td>{{ number_format($item->price * $item->quantity, 2, ',', ' ') }} €</td>
                 </tr>
             @endforeach
 
             <tr class="total">
                 <td></td>
-                <td>Total: €{{ number_format($order->total_price, 2) }}</td>
+                <td>Sous-total: {{ number_format($order->total_price, 2, ',', ' ') }} €</td>
             </tr>
 
             <tr class="tax">
                 <td></td>
-                <td>VAT (20%): €{{ number_format($order->total_price * 0.2, 2) }}</td>
+                <td>TVA (20%): {{ number_format($order->total_price * 0.2, 2, ',', ' ') }} €</td>
             </tr>
 
             <tr class="total">
                 <td></td>
-                <td>Grand Total: €{{ number_format($order->total_price * 1.2, 2) }}</td>
+                <td>Total TTC: {{ number_format($order->total_price * 1.2, 2, ',', ' ') }} €</td>
             </tr>
-            <div class="footer">
-                <p><strong>Payment Information</strong></p>
-                <p>Bank: Your Bank Name | IBAN: YOURIBAN123456789 | SWIFT: YOURSWIFT</p>
-                <p>Accepted Payment Methods: Bank Transfer, Credit Card</p>
-
-                <p><strong>Terms and Conditions</strong></p>
-                <p>Payment due within 30 days of receipt. Late payments may incur interest charges.</p>
-
-                <p><strong>Legal Information</strong></p>
-                <p>VAT Number: YOURVATNUMBER | Company Registration: YOURCOMPANYREGNUMBER</p>
-            </div>
         </table>
+
+        <div class="footer">
+            <p><strong>Informations légales</strong></p>
+            <p>Numéro de TVA intracommunautaire: FR 32 123456789 | SIRET: 123 456 789 00019 | RCS Paris B 123 456 789
+            </p>
+            <p>SAS au capital de 50 000 € | Code APE: 4791A</p>
+        </div>
     </div>
 </body>
 

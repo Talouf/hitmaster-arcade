@@ -11,11 +11,19 @@ class LanguageController extends Controller
 {
     public function switchLanguage($lang)
     {
+        Log::info("Switching language. Requested: " . $lang);
+
         if (in_array($lang, ['en', 'fr'])) {
             Session::put('applocale', $lang);
             App::setLocale($lang);
-            Log::info("Language switched to: " . $lang);
+            Session::save();  // Ensure the session is saved
+
+            Log::info("Language switched. New App Locale: " . App::getLocale());
+            Log::info("Language switched. New Session Locale: " . Session::get('applocale'));
+        } else {
+            Log::warning("Invalid language requested: " . $lang);
         }
-        return redirect(url()->previous())->withInput();
+
+        return redirect()->back();
     }
 }

@@ -30,10 +30,5 @@
         <h2 class="text-2xl font-semibold mb-4 text-white">4. Protection des données personnelles</h2>
         <p>Conformément à la loi "Informatique et Libertés" du 6 janvier 1978 modifiée, vous disposez d'un droit d'accès, de modification et de suppression des données vous concernant. Pour exercer ce droit, veuillez nous contacter à l'adresse suivante : privacy@hitmasterarcade.com</p>
     </section>
-
-    <section class="text-gray-300">
-        <h2 class="text-2xl font-semibold mb-4 text-white">5. Cookies</h2>
-        <p>Ce site utilise des cookies pour améliorer l'expérience utilisateur. En continuant à naviguer sur ce site, vous acceptez l'utilisation de cookies conformément à notre politique de confidentialité.</p>
-    </section>
 </div>
 @endsection

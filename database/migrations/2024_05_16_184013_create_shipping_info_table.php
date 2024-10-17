@@ -12,6 +12,7 @@ class CreateShippingInfoTable extends Migration
             $table->id();
             $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('cascade');
             $table->foreignId('order_id')->nullable()->constrained('orders')->onDelete('cascade');
+            $table->string('name')->nullable(); // Add the name field
             $table->string('address');
             $table->string('city');
             $table->string('state')->nullable();

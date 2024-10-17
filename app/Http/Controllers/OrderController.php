@@ -15,12 +15,15 @@ class OrderController extends Controller
     public function show(Order $order)
     {
         $this->authorize('view', $order);
-        return view('orders.show', compact('order'));
+        $shippingInfo = $order->shippingInfo;
+        return view('orders.show', compact('order', 'shippingInfo'));
     }
 
     public function downloadInvoice(Order $order)
     {
         $this->authorize('view', $order);
+
+        $order->load(['user', 'orderItems.product']); // Eager load relationships
 
         $logoPath = public_path('images/hitmaster.png');
         $logoData = base64_encode(file_get_contents($logoPath));
